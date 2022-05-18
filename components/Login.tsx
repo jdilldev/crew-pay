@@ -1,12 +1,10 @@
 import React, { useState } from "react"
-import { View, Text, Image, Pressable, Button, ImageBackground } from "react-native"
+import { Image, Pressable, Button, ImageBackground } from "react-native"
 import LottieView from 'lottie-react-native';
-import styled from 'styled-components/native'
-import GlobalStyles, { H1, IconInput, PrimaryButton, SecondaryButton } from '../styles/styles';
-import { loginType } from "../constants/enums";
-
+import GlobalStyles, { Text, View, PrimaryButton, SecondaryButton } from '../styles/styles';
+import { LoginType } from "../types";
 export const Login = () => {
-    const [phoneOrEmail, setLoginType] = useState<loginType>(loginType.PHONE)
+    const [phoneOrEmail, setLoginType] = useState<LoginType>(LoginType.PHONE)
 
     return (
         <View style={{ flex: 1, paddingHorizontal: 20 }}>
@@ -31,24 +29,6 @@ export const Login = () => {
                     <SecondaryButton fullWidth onPress={() => { }} />
                 </View>
 
-                {/*  {phoneOrEmail === loginType.PHONE ?
-                    <IconInput icon='keypad-outline' placeholder={'Enter phone number'} type={phoneOrEmail} />
-                    : <IconInput icon='email' placeholder={'Enter email address'} type={phoneOrEmail} />
-                } */}
-                {/*   <Pressable
-                    style={{ display: 'flex', alignItems: 'center' }}
-                    onPress={() => { phoneOrEmail === loginType.PHONE ? setLoginType(loginType.EMAIL) : setLoginType(loginType.PHONE) }}>
-                    <Text>
-                        Use {phoneOrEmail === loginType.PHONE ? loginType.EMAIL : loginType.PHONE}
-                    </Text>
-                </Pressable>
-                <Button title="Get one-time passcode"></Button> */}
-                {/*          <LottieView
-                    style={{ height: 150 }}
-                    autoPlay
-                    loop
-                    source={require('../assets/lotties/howdy.json')}
-                /> */}
             </View>
             <View style={{ flex: .2, alignItems: 'center', }}>
                 <Text style={{ fontWeight: '200' }}>Country</Text>
