@@ -1,11 +1,15 @@
-import { useTheme, } from '@react-navigation/native';
-import { StyleSheet, View as DefaultView, TextInput, Pressable, Text as DefaultText, FlexAlignType } from 'react-native';
-import styled from 'styled-components/native'
-import { LoginType } from '../types';
-import { TextProps, ViewProps, useThemeColor, IconTypes, IoniconTypes, MaterialIconTypes, ZocialIconTypes, SimpleIconTypes } from '../types';
 import React from 'react';
+import {
+  StyleSheet,
+  View as DefaultView,
+  Pressable,
+  TextInput,
+  Text as DefaultText, FlexAlignType
+} from 'react-native';
+import styled from 'styled-components/native'
+import { ButtonProps, LoginType } from '../types';
+import { TextProps, ViewProps, useThemeColor, IconProps, IconTypes, IoniconTypes, MaterialIconTypes, ZocialIconTypes, SimpleIconTypes } from '../types';
 import { Ionicons, MaterialIcons, SimpleLineIcons, Zocial } from '@expo/vector-icons';
-import { IconProps } from '../types';
 
 const FontSize = {
   'small': 12,
@@ -65,6 +69,7 @@ export function View(props: ViewProps) {
     style,
     lightColor,
     darkColor,
+    spacing = false,
     ...otherProps } = props;
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 
@@ -74,28 +79,30 @@ export function View(props: ViewProps) {
       flexDirection: orientation,
       alignItems: align as FlexAlignType,
       justifyContent: justify,
+      marginTop: spacing ? 5 : 0,
+      marginBottom: spacing ? 5 : 0,
       // justifyContent: orientation === 'column' ? align : 'flex-start',
       backgroundColor,
       flex
     }, style]} {...otherProps} />;
 }
 
-export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor }: IconProps) => {
+export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor, ...otherProps }: IconProps) => {
   let Icon = null;
   let iconColor = color ? color : useThemeColor({ light: lightColor, dark: darkColor }, 'default')
 
   switch (pack) {
     case 'ion':
-      Icon = <Ionicons name={icon as IoniconTypes} size={FontSize[size]} />
+      Icon = <Ionicons name={icon as IoniconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
       break;
     case 'material':
-      Icon = <MaterialIcons name={icon as MaterialIconTypes} />
+      Icon = <MaterialIcons name={icon as MaterialIconTypes} color={iconColor} />
       break;
     case 'simple':
-      Icon = <SimpleLineIcons name={icon as SimpleIconTypes} />
+      Icon = <SimpleLineIcons name={icon as SimpleIconTypes} color={iconColor} />
       break;
     case 'zocial':
-      Icon = <Zocial name={icon as ZocialIconTypes} />
+      Icon = <Zocial name={icon as ZocialIconTypes} color={iconColor} />
       break;
   }
 
@@ -129,26 +136,45 @@ export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, 
 )
 
 
-export const PrimaryButton = ({ fullWidth, midWidth, onPress, }: { fullWidth?: boolean, midWidth?: boolean, onPress: () => any }) => {
-  const { colors } = useTheme();
+export const Button = ({
+  onPress,
+  text,
+  outlined,
+  shape = 'rounded',
+  size = 'normalButton',
+  disabled,
+  capitalized,
+  customColor,
+  elevated,
+  width,
+  type = 'default',
+  lightColor,
+  darkColor
+}: ButtonProps) => {
+  let color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background')
+  let buttonTextColor = outlined ? color : backgroundColor
+  let buttonBackgroundColor = outlined ? backgroundColor : color;
+
+
+
+  const Shape = {
+    'rounded': 7,
+    'oval': 20,
+    'square': 0,
+  }
 
   return (
-    <Pressable style={{ backgroundColor: colors.primary, borderRadius: 20, paddingHorizontal: midWidth ? 50 : 10, paddingVertical: 4, marginTop: 10, marginBottom: 10, alignSelf: fullWidth ? 'stretch' : 'auto', alignItems: 'center' }}
+    <Pressable
       onPress={onPress}
-    >
-      <Text spacing={false} type='anti' size='normalButton' thickness='bold' style={{ fontFamily: 'Avenir' }}>Sign Up</Text>
-    </Pressable>
-  )
-}
-
-export const SecondaryButton = ({ fullWidth, onPress }: { fullWidth?: boolean, onPress: () => any }) => {
-  const { colors } = useTheme();
-
-  return (
-    <Pressable style={{ borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, borderColor: '#34658f', borderWidth: 1, marginTop: 10, marginBottom: 10, alignSelf: fullWidth ? 'stretch' : 'auto', alignItems: 'center', }}
-      onPress={onPress}
-    >
-      <Text spacing={false} size='normalButton' thickness="bold" type='primary' style={{ fontFamily: 'Avenir' }}>{'hi'}</Text>
+      style={{
+        marginHorizontal: width === 'medium' ? 50 : 0,
+        backgroundColor: buttonBackgroundColor,
+        borderColor: outlined ? color : buttonBackgroundColor,
+        borderWidth: 2,
+        borderRadius: Shape[shape]
+      }} >
+      <Text thickness='bold' align='center' type={type} customColor={buttonTextColor} size={size}>{text}</Text>
     </Pressable>
   )
 }

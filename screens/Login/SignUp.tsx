@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Pressable, } from "react-native"
-import { View, Text, Icon, IconInput, PrimaryButton, } from "../../styles/styles";
+import { View, Text, Icon, IconInput, } from "../../styles/styles";
 import { RootStackScreenProps, LoginType } from "../../types";
 
 const SignUp = ({ navigation }: RootStackScreenProps<'SignUp'>) => {
@@ -22,8 +22,6 @@ const SignUp = ({ navigation }: RootStackScreenProps<'SignUp'>) => {
                         : <IconInput icon='email' pack='material' placeholder={'Enter email address'} type={phoneOrEmail} />
                     }
                 </Pressable>
-                <PrimaryButton midWidth onPress={() => { }} />
-
                 <Pressable
                     style={{ display: 'flex', alignItems: 'center' }}
                     onPress={() => { phoneOrEmail === LoginType.PHONE ? setLoginType(LoginType.EMAIL) : setLoginType(LoginType.PHONE) }}>

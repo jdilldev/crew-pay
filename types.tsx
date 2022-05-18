@@ -5,11 +5,12 @@ import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/n
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   View as DefaultView,
-  Text as DefaultText
+  Text as DefaultText,
+  Button as DefaultButton
 } from 'react-native'
 import Colors from './constants/Colors';
 import useColorScheme from './hooks/useColorScheme';
-import { IconThemeProps, TextThemeProps, ViewThemeProps } from './styles/Interfaces';
+import { ButtonThemeProps, IconThemeProps, TextThemeProps, ViewThemeProps } from './styles/Interfaces';
 
 declare global {
   namespace ReactNavigation {
@@ -44,9 +45,10 @@ export type MaterialIconTypes = keyof typeof MaterialIcons.glyphMap;
 export type SimpleIconTypes = keyof typeof SimpleLineIcons.glyphMap;
 export type ZocialIconTypes = keyof typeof Zocial.glyphMap;
 
-export type IconProps = ThemeProps & IconThemeProps;
+export type IconProps = ThemeProps & React.CSSProperties & IconThemeProps;
 export type TextProps = ThemeProps & DefaultText['props'] & TextThemeProps;
 export type ViewProps = ThemeProps & DefaultView['props'] & ViewThemeProps;
+export type ButtonProps = ThemeProps & ButtonThemeProps;
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
