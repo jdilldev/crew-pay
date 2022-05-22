@@ -4,7 +4,7 @@ import {
   View as DefaultView,
   Pressable,
   TextInput,
-  Text as DefaultText, FlexAlignType
+  Text as DefaultText, FlexAlignType, ViewStyle, Dimensions
 } from 'react-native';
 import styled from 'styled-components/native'
 import { ButtonProps, LoginType } from '../types';
@@ -16,8 +16,8 @@ const FontSize = {
   'medium': 24,
   'large': 42,
   'default': 17,
-  'smallButton': 10,
-  'normalButton': 20,
+  'smallButton': 15,
+  'normalButton': 23,
   'largeButton': 30
 }
 
@@ -32,6 +32,8 @@ const TextWeight = {
 export const h1 = styled.Text`
   font-size: 42;
 `
+
+const DEVICE_WIDTH = Dimensions.get('window').width - 60;
 
 export function Text(props: TextProps,) {
   const {
@@ -69,6 +71,7 @@ export function View(props: ViewProps) {
     style,
     lightColor,
     darkColor,
+    wrap = false,
     spacing = false,
     ...otherProps } = props;
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
@@ -77,6 +80,7 @@ export function View(props: ViewProps) {
     [{
       display: 'flex',
       flexDirection: orientation,
+      flexWrap: wrap ? 'wrap' : 'nowrap',
       alignItems: align as FlexAlignType,
       justifyContent: justify,
       marginTop: spacing ? 5 : 0,
@@ -96,13 +100,13 @@ export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor
       Icon = <Ionicons name={icon as IoniconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
       break;
     case 'material':
-      Icon = <MaterialIcons name={icon as MaterialIconTypes} color={iconColor} />
+      Icon = <MaterialIcons name={icon as MaterialIconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
       break;
     case 'simple':
-      Icon = <SimpleLineIcons name={icon as SimpleIconTypes} color={iconColor} />
+      Icon = <SimpleLineIcons name={icon as SimpleIconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
       break;
     case 'zocial':
-      Icon = <Zocial name={icon as ZocialIconTypes} color={iconColor} />
+      Icon = <Zocial name={icon as ZocialIconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
       break;
   }
 
@@ -139,6 +143,8 @@ export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, 
 export const Button = ({
   onPress,
   text,
+  icon,
+  iconPosition = 'start',
   outlined,
   shape = 'rounded',
   size = 'normalButton',
@@ -149,9 +155,10 @@ export const Button = ({
   width,
   type = 'default',
   lightColor,
-  darkColor
+  darkColor,
+  style
 }: ButtonProps) => {
-  let color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
+  const color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background')
   let buttonTextColor = outlined ? color : backgroundColor
   let buttonBackgroundColor = outlined ? backgroundColor : color;
@@ -167,16 +174,36 @@ export const Button = ({
   return (
     <Pressable
       onPress={onPress}
-      style={{
-        marginHorizontal: width === 'medium' ? 50 : 0,
+      style={[{
+        width: width === 'medium' ? DEVICE_WIDTH / 2 : DEVICE_WIDTH,
+        display: 'flex',
+        flexDirection: icon ? (iconPosition === 'start' ? 'row' : 'row-reverse') : 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: buttonBackgroundColor,
         borderColor: outlined ? color : buttonBackgroundColor,
         borderWidth: 2,
-        borderRadius: Shape[shape]
-      }} >
-      <Text thickness='bold' align='center' type={type} customColor={buttonTextColor} size={size}>{text}</Text>
+        borderRadius: Shape[shape],
+      }, style]} >
+      {icon && <Icon icon={icon.icon} pack={icon.pack} color={buttonTextColor} style={{ marginHorizontal: 15 }} />}
+      <Text
+        thickness='bold'
+        align='center'
+        type={type}
+        customColor={buttonTextColor}
+        size={size}>{text}
+      </Text>
     </Pressable>
   )
+}
+
+export const ButtonGroup = ({ buttons, otherProps }: { buttons: string[], otherProps?: ButtonProps }) => {
+
+  return <View orientation='row' >
+    {buttons.map(buttonText =>
+      <Button shape='square'  {...otherProps} onPress={() => { }} text={buttonText}></Button>
+    )}
+  </View >
 }
 
 export default StyleSheet.create({

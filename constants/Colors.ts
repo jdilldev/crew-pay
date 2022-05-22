@@ -24,7 +24,7 @@ export default {
     success:'green',
     default: '#fff',
     anti:'#000',
-    background: '#303030',
+    background: 'black',
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,

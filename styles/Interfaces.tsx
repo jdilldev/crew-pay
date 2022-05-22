@@ -1,4 +1,5 @@
-import { IconTypes } from "../types"
+import { ViewStyle } from "react-native"
+import { IconProps, IconTypes } from "../types"
 
 export interface TextThemeProps {
     type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti'
@@ -15,25 +16,31 @@ export interface ViewThemeProps {
     justify?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
     flex?: number,
     spacing?: boolean
+    wrap?: boolean
 }
 
 export interface IconThemeProps {
     icon: IconTypes
     pack: 'ion' | 'material' | 'simple' | 'zocial'
     size?: 'large' | 'medium' | 'small'
-    color?: string
+    color?: string,
+    style?: ViewStyle
 }
 
 export interface ButtonThemeProps {
     onPress: () => any
     text: string,
+    icon?: IconProps,
+    iconPosition?: 'start' | 'end'
     size?: 'largeButton' | 'normalButton' | 'smallButton'
     type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti'
     shape?: 'rounded' | 'oval' | 'square'
-    width?: 'full' | 'medium'
+    width?: 'full' | 'medium',
     customColor?: string
     disabled?: boolean
     capitalized?: boolean
     elevated?: boolean
     outlined?: boolean
+    style?: ViewStyle
 }
+

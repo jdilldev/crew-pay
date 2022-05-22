@@ -34,7 +34,7 @@ function RootNavigator() {
     <Stack.Navigator
     >
       <Stack.Screen name="Root" component={PreAuth} options={{ headerShown: false, ...navigationOptions }} />
-      <Stack.Screen name="SignUp" component={SignUp} options={{ title: 'Create Account', headerShown: true, ...navigationOptions }} />
+      <Stack.Screen name="SignUp" component={SignUp} options={{ title: '', headerShown: true, ...navigationOptions }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );
