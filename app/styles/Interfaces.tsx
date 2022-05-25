@@ -17,6 +17,7 @@ export interface ViewThemeProps {
     flex?: number,
     spacing?: boolean
     wrap?: boolean
+    transparent?: boolean
 }
 
 export interface IconThemeProps {
@@ -37,7 +38,6 @@ export interface ButtonThemeProps {
     shape?: 'rounded' | 'oval' | 'square'
     width?: 'full' | 'medium',
     customColor?: string
-    disabled?: boolean
     capitalized?: boolean
     elevated?: boolean
     outlined?: boolean

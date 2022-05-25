@@ -1,7 +1,8 @@
 import React, { useState } from "react"
-import { NativeModules, Platform } from "react-native"
+import { NativeModules, Platform, Image, Pressable } from "react-native"
 import LottieView from 'lottie-react-native';
-import GlobalStyles, { View, Text, Button } from '../../styles/styles';
+import { View, Text, Button } from '../../styles/styles';
+//import GmailLogo from '../../assets/svgs/gmail-logo.svg'
 import { RootStackScreenProps } from "../../types";
 const platform = Platform.OS
 
@@ -52,9 +53,17 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
 
                 <View style={{ flex: .6 }} orientation="column" >
                     <Text align="center" spacing={false}>Or connect to Google account</Text>
-                    <View justify="space-evenly" orientation="row" spacing={true} wrap>
-                        <Text size="small" onPress={() => { }}>Link Gmail</Text>
-                    </View>
+                    <Pressable
+                        onPress={() => { console.log('mush') }}
+                    >
+                        <View justify="center" orientation="row" spacing={true} wrap>
+                            <Image
+                                style={{ width: 30, height: 30 }}
+                                source={require('../../assets/images/vector/gmail-logo.jpg')} />
+                            <Text size="small">Link Gmail</Text>
+                        </View>
+                    </Pressable>
+
 
                 </View>
             </View>

@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View as DefaultView,
   Pressable,
   TextInput,
-  Text as DefaultText, FlexAlignType, ViewStyle, Dimensions
+  Text as DefaultText,
+  FlexAlignType,
+  Dimensions,
 } from 'react-native';
-import styled from 'styled-components/native'
 import { ButtonProps, LoginType } from '../types';
 import { TextProps, ViewProps, useThemeColor, IconProps, IconTypes, IoniconTypes, MaterialIconTypes, ZocialIconTypes, SimpleIconTypes } from '../types';
 import { Ionicons, MaterialIcons, SimpleLineIcons, Zocial } from '@expo/vector-icons';
@@ -29,11 +30,8 @@ const TextWeight = {
   'thickkk': '900',
 } as const;
 
-export const h1 = styled.Text`
-  font-size: 42;
-`
-
 const DEVICE_WIDTH = Dimensions.get('window').width - 60;
+
 
 export function Text(props: TextProps,) {
   const {
@@ -73,8 +71,9 @@ export function View(props: ViewProps) {
     darkColor,
     wrap = false,
     spacing = false,
+    transparent,
     ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  const backgroundColor = transparent ? 'transparent' : useThemeColor({ light: lightColor, dark: darkColor }, 'background')
 
   return <DefaultView style={
     [{
@@ -113,32 +112,6 @@ export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor
   return Icon;
 }
 
-export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, pack: 'ion' | 'material' | 'simple' | 'zocial', placeholder: string, type: LoginType }) => (
-  <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
-    <View style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 25,
-      height: 45,
-      width: 45,
-      shadowOffset: {
-        width: -5,
-        height: 10
-      },
-      shadowRadius: 12,
-      shadowOpacity: .5
-    }}>
-      <Icon icon={icon} pack={pack} />
-    </View>
-    <TextInput
-      placeholder={placeholder}
-      style={{ fontSize: 24, paddingHorizontal: 12 }}
-      textContentType={type === LoginType.PHONE ? 'telephoneNumber' : 'emailAddress'}
-      autoComplete={type === LoginType.PHONE ? 'tel-device' : 'email'} />
-  </View>
-)
-
 
 export const Button = ({
   onPress,
@@ -148,7 +121,6 @@ export const Button = ({
   outlined,
   shape = 'rounded',
   size = 'normalButton',
-  disabled,
   capitalized,
   customColor,
   elevated,
@@ -156,14 +128,13 @@ export const Button = ({
   type = 'default',
   lightColor,
   darkColor,
-  style
+  style,
+  ...otherProps
 }: ButtonProps) => {
   const color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background')
   let buttonTextColor = outlined ? color : backgroundColor
   let buttonBackgroundColor = outlined ? backgroundColor : color;
-
-
 
   const Shape = {
     'rounded': 7,
@@ -171,10 +142,15 @@ export const Button = ({
     'square': 0,
   }
 
+  const [pressing, setPressing] = useState(false)
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={(onPress)}
+      onPressIn={() => { setPressing(true) }}
+      onPressOut={() => setPressing(false)}
       style={[{
+        opacity: otherProps.disabled ? .4 : pressing ? .8 : 1,
         width: width === 'medium' ? DEVICE_WIDTH / 2 : DEVICE_WIDTH,
         display: 'flex',
         flexDirection: icon ? (iconPosition === 'start' ? 'row' : 'row-reverse') : 'column',
@@ -205,6 +181,33 @@ export const ButtonGroup = ({ buttons, otherProps }: { buttons: string[], otherP
     )}
   </View >
 }
+
+export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, pack: 'ion' | 'material' | 'simple' | 'zocial', placeholder: string, type: LoginType }) => (
+  <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
+    <View style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 25,
+      height: 45,
+      width: 45,
+      shadowOffset: {
+        width: -5,
+        height: 10
+      },
+      shadowRadius: 12,
+      shadowOpacity: .5
+    }}>
+      <Icon icon={icon} pack={pack} />
+    </View>
+    <TextInput
+      placeholder={placeholder}
+      style={{ fontSize: 24, paddingHorizontal: 12 }}
+      textContentType={type === LoginType.PHONE ? 'telephoneNumber' : 'emailAddress'}
+      autoComplete={type === LoginType.PHONE ? 'tel-device' : 'email'} />
+  </View>
+)
+
 
 export default StyleSheet.create({
   h1: {

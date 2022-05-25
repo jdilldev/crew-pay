@@ -20,7 +20,7 @@ declare global {
   }
 }
 
-declare type ThemeProps = {
+export type ThemeProps = {
   lightColor?: string;
   darkColor?: string;
 };
