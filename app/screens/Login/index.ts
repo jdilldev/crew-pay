@@ -1,4 +1,5 @@
 import PreAuth from "./PreAuth";
-import SignUp from "./SignUp"
+import GetStarted from "./GetStarted"
+import AuthPasscode from './AuthPasscode'
 
-export {PreAuth, SignUp}
+export {PreAuth, GetStarted, AuthPasscode}

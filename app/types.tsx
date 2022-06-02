@@ -39,7 +39,7 @@ export const useThemeColor = (
   }
 }
 
-export enum LoginType { 'PHONE', 'EMAIL' }
+export enum LoginType { 'PHONE', 'EMAIL', 'GMAIL' }
 
 export type IconTypes = IoniconTypes | MaterialIconTypes | SimpleIconTypes | ZocialIconTypes;
 export type IoniconTypes = keyof typeof Ionicons.glyphMap;
@@ -57,7 +57,9 @@ export type RootStackParamList = {
   Modal: undefined;
   NotFound: undefined;
   Login: undefined;
-  SignUp: undefined;
+  GetStarted: undefined;
+  AuthPasscode: undefined;
+  Dashboard: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

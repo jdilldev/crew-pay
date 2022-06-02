@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   StyleSheet,
   View as DefaultView,
@@ -7,10 +7,25 @@ import {
   Text as DefaultText,
   FlexAlignType,
   Dimensions,
+  Image,
+  Modal,
+  FlatList,
 } from 'react-native';
+import {
+  parsePhoneNumber,
+  AsYouType,
+  getCountryCallingCode,
+  isSupportedCountry,
+  isValidNumberForRegion,
+  CountryCallingCode,
+  isValidPhoneNumber,
+  CountryCode,
+} from 'libphonenumber-js'
 import { ButtonProps, LoginType } from '../types';
 import { TextProps, ViewProps, useThemeColor, IconProps, IconTypes, IoniconTypes, MaterialIconTypes, ZocialIconTypes, SimpleIconTypes } from '../types';
 import { Ionicons, MaterialIcons, SimpleLineIcons, Zocial } from '@expo/vector-icons';
+import { COUNTRY_DATA } from '../constants/Constants';
+import { ColorContext } from '../GlobalUserSettingsContext';
 
 const FontSize = {
   'small': 12,
@@ -208,6 +223,198 @@ export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, 
   </View>
 )
 
+
+interface CustomInputProps {
+  updateInput: (val: string) => void
+  previousValue: string,
+}
+
+export const PhoneValidationInput = ({ updateInput, previousValue }: CustomInputProps) => {
+  const { countryCode, countryCallingCode, } = useContext(ColorContext)
+  const [phoneInput, setPhoneInput] = useState(previousValue)
+  const [countryPickerVisibility, setCountryPickerVisibility] = useState(false);
+
+  const phoneFormatter: AsYouType = new AsYouType(countryCode)
+
+  const handlePhoneNumberChange = (newNumber: string) => {
+    if (isValidPhoneNumber(newNumber, countryCode)) {
+      phoneFormatter.input(newNumber)
+
+      const formattedNumber =
+        phoneFormatter
+          .getNumber()!
+          .formatInternational()
+          .replace(`+${countryCallingCode} `, '');
+
+      setPhoneInput(formattedNumber)
+      updateInput(formattedNumber)
+    } else {
+      updateInput(newNumber)
+    }
+  }
+
+  return <View transparent>
+    <View
+      orientation="row"
+      align="center"
+      justify="flex-start"
+      spacing={false}
+      transparent>
+      <Pressable
+        onPress={() => { setCountryPickerVisibility(true) }}
+      >
+        <Image
+          style={{ width: 40, height: 25 }}
+          source={{ uri: `https://countryflagsapi.com/png/${countryCode}` }} />
+      </Pressable>
+
+      <Text
+        style={{ fontSize: 20, paddingLeft: 7 }}>
+        {`+ ${countryCallingCode}`}
+      </Text>
+
+      <View orientation="row" style={{ borderRightColor: 'black', borderRightWidth: 1, marginHorizontal: 5, }} />
+      <TextInput
+        keyboardType={'phone-pad'}
+        placeholder={'Enter phone number'}
+        style={{ paddingRight: 0, fontSize: 20, }}
+        onChangeText={handlePhoneNumberChange} >
+        {phoneInput}
+      </TextInput>
+    </View>
+    <CountryPicker
+      visible={countryPickerVisibility}
+      updateVisibility={(val: boolean) => setCountryPickerVisibility(val)}
+    />
+  </View>
+}
+
+export const isValidEmail = (emailAddress: string) => {
+  const re = /\S+@\S+\.\S+/;
+
+
+  return (re.test(emailAddress)) ? true : false
+}
+
+export const EmailValidationInput = ({ updateInput, previousValue }: CustomInputProps) => {
+  const { countryCode, } = useContext(ColorContext)
+  const [emailInput, setEmailInput] = useState(previousValue)
+  const [countryPickerVisibility, setCountryPickerVisibility] = useState(false);
+
+
+  const handleEmailChange = (newEmail: string) => {
+    const trimmedEmail = newEmail.trim().toLowerCase()
+
+    updateInput(newEmail)
+    setEmailInput(trimmedEmail)
+  }
+
+  return <View transparent orientation='row' align='center'>
+    <Pressable
+      onPress={() => { setCountryPickerVisibility(true) }}
+    >
+      <Image
+        style={{ width: 40, height: 25 }}
+        source={{ uri: `https://countryflagsapi.com/png/${countryCode}` }} />
+    </Pressable>
+    <TextInput
+      textAlign="center"
+      keyboardType='email-address'
+      placeholder={'Enter email address'}
+      style={{ padding: 5, marginLeft: 5, fontSize: 20, fontWeight: '300', }}
+      onChangeText={handleEmailChange} >
+      {emailInput.toLowerCase()}
+    </TextInput>
+    <CountryPicker
+      visible={countryPickerVisibility}
+      updateVisibility={(val: boolean) => setCountryPickerVisibility(val)}
+    />
+  </View>
+
+}
+
+interface ICountryPickerProps {
+  visible: boolean
+  updateVisibility: (visibility: boolean) => void
+}
+export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProps) => {
+  const { setCountryCallingCode, setCountryCode } = useContext(ColorContext)
+  const [countrySearch, setCountrySearch] = useState('')
+  const [preSelectedCountry, setPreSelectedCountry] = useState('')
+
+  const handleCountryChange = (newCountry: string) => {
+    const newCountryAsCountryCode = newCountry.toUpperCase() as CountryCode
+    if (isSupportedCountry(newCountryAsCountryCode)) {
+      setPreSelectedCountry('')
+      setCountryCode(newCountryAsCountryCode)
+      setCountryCallingCode(getCountryCallingCode(newCountryAsCountryCode))
+    }
+  }
+  return <Modal
+    animationType="slide"
+    transparent={true}
+    visible={visible}>
+    <View style={{
+      flex: 1.5,
+      justifyContent: 'center',
+      alignItems: "center",
+      backgroundColor: 'transparent'
+    }}>
+      <View style={{
+        padding: 10,
+        width: '70%',
+        height: 'auto',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#cdd2c9',
+        backgroundColor: '#f1f3f4f3',
+      }}>
+        <TextInput
+          style={{
+            color: 'cornflowerblue',
+            fontSize: 20,
+            textAlign: 'left',
+            fontWeight: '300',
+          }}
+          onChangeText={(text) => setCountrySearch(text)}
+          placeholder="Search for Country">
+          {countrySearch}
+        </TextInput>
+        <FlatList
+          data={COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))}
+          ListEmptyComponent={<Text align="center">No supported countries</Text>}
+          renderItem={({ item, index, separators }) => {
+            const filteredCountries = COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))
+            return <Pressable
+              onPressIn={() => setPreSelectedCountry(item.title)}
+              onPressOut={() => setPreSelectedCountry('')}
+              style={{
+
+                borderBottomColor: '#38383874', borderBottomWidth: index === filteredCountries.length - 1 ? 0 : 1, opacity: preSelectedCountry === item.title ? .7 : 1
+              }}
+              onPress={() => {
+                updateVisibility(false)
+                handleCountryChange(item.id)
+              }}>
+              <View orientation="row" align="center"
+                style={{
+                  backgroundColor: 'transparent',
+                }} >
+                <Image source={item.image} style={{ width: 30, height: 20, marginHorizontal: 10 }} />
+                <Text>{item.title}</Text>
+                <Text size="default" style={{
+                  backgroundColor: 'transparent',
+                  position: "absolute",
+                  right: 0
+                }}>{`(+${getCountryCallingCode(item.id as CountryCode)})`} </Text>
+              </View>
+            </Pressable>
+          }}
+          keyExtractor={item => item.id} />
+      </View>
+    </View>
+  </Modal >
+}
 
 export default StyleSheet.create({
   h1: {

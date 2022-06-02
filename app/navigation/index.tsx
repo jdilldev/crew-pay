@@ -3,7 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Appearance } from 'react-native';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import { PreAuth, SignUp } from '../screens/Login'
+import { AuthPasscode, PreAuth, GetStarted } from '../screens/Login'
+import Dashboard from '../screens/Dashboard'
 
 import { RootStackParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -26,15 +27,21 @@ function RootNavigator() {
 
   const navigationOptions = {
     headerBackTitle: '',
-    headerStyle: { backgroundColor: theme === 'light' ? Colors.light.background : Colors.dark.background },
-    headerTintColor: 'limegreen'
+    //headerStyle: { backgroundColor: theme === 'light' ? Colors.light.background : Colors.dark.background },
+    headerTintColor: 'limegreen',
+
   }
 
   return (
     <Stack.Navigator
     >
       <Stack.Screen name="Root" component={PreAuth} options={{ headerShown: false, ...navigationOptions }} />
-      <Stack.Screen name="SignUp" component={SignUp} options={{ title: '', headerShown: true, ...navigationOptions }} />
+      <Stack.Screen name="GetStarted" component={GetStarted} options={{ title: '', headerShown: true, ...navigationOptions }} />
+      <Stack.Screen name="AuthPasscode" component={AuthPasscode} options={{ title: 'Verify Code', headerShown: false, ...navigationOptions }} />
+      <Stack.Screen name="Dashboard" component={Dashboard} options={{
+        ...navigationOptions,
+        headerBackVisible: false
+      }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

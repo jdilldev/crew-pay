@@ -1,17 +1,14 @@
-import React, { useState } from "react"
-import { NativeModules, Platform, Image, Pressable } from "react-native"
+import React, { createContext, useContext } from "react"
+import { Platform, Image, Pressable } from "react-native"
 import LottieView from 'lottie-react-native';
 import { View, Text, Button } from '../../styles/styles';
-//import GmailLogo from '../../assets/svgs/gmail-logo.svg'
-import { RootStackScreenProps } from "../../types";
-const platform = Platform.OS
+import { LoginType, RootStackScreenProps } from "../../types";
+import { ColorContext } from "../../GlobalUserSettingsContext";
 
-const geoInfo = platform === 'ios' ? NativeModules.SettingsManager.settings.AppleLocale ||
-    NativeModules.SettingsManager.settings.AppleLanguages[0] : NativeModules.I18nManager.localeIdentifier
-
-const [language, countryISO] = geoInfo.split('_')
 
 const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
+    const { setAuthType } = useContext(ColorContext)
+
     return (
         <View flex={1} style={{ paddingHorizontal: 20 }}>
             <View flex={2}>
@@ -24,7 +21,7 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
             <View flex={1} justify='center' align="center" >
                 <Text size='large' thickness="bold" spacing={false} style={{ marginTop: -80, }}>Oh you look <Text thickness="ultralight" size="large" style={{ fontStyle: 'italic' }}>good</Text> when you stack that <Text size="large" customColor="green">cash</Text> up.</Text>
                 <Text
-                    align="center">The modern way to spend money and split costs with friends.
+                    align="center">The modern way to spend money and split costs in a group.
                 </Text>
             </View>
             <View flex={1} orientation='column' justify="space-evenly" style={{ paddingBottom: 30 }}>
@@ -37,7 +34,8 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                         icon: 'phone-portrait-outline', pack: 'ion'
                     }}
                     onPress={() => {
-                        navigation.navigate('SignUp')
+                        setAuthType(LoginType.PHONE)
+                        navigation.navigate('GetStarted')
                     }} />
                 <Button
                     type='primary'
@@ -48,13 +46,14 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     icon={{
                         icon: 'email', pack: 'zocial'
                     }} onPress={() => {
-                        navigation.navigate('SignUp')
+                        setAuthType(LoginType.EMAIL)
+                        navigation.navigate('GetStarted')
                     }} />
 
                 <View style={{ flex: .6 }} orientation="column" >
                     <Text align="center" spacing={false}>Or connect to Google account</Text>
                     <Pressable
-                        onPress={() => { console.log('mush') }}
+                        onPress={() => { setAuthType(LoginType.GMAIL) }}
                     >
                         <View justify="center" orientation="row" spacing={true} wrap>
                             <Image
@@ -63,8 +62,6 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                             <Text size="small">Link Gmail</Text>
                         </View>
                     </Pressable>
-
-
                 </View>
             </View>
         </View >
