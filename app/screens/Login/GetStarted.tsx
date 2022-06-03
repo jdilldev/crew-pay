@@ -88,7 +88,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 style={{ alignSelf: 'center' }}
                 type='primary'
                 icon={{ icon: 'send', pack: 'material' }}
-                //  disabled={authType === LoginType.PHONE ? !isValidPhoneNumber(phoneInput, countryCode) : !isValidEmail(emailInput)}
+                disabled={authType === LoginType.PHONE ? !isValidPhoneNumber(phoneInput, countryCode) : !isValidEmail(emailInput)}
                 width="full" text="Get passcode"
                 onPress={() => {
                     phoneFormatter.input(phoneInput)
