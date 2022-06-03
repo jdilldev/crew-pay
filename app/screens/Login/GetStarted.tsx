@@ -17,6 +17,7 @@ import { LoginType, RootStackScreenProps, ThemeProps } from "../../types";
 import Login from "./PreAuth";
 import { ColorContext } from "../../GlobalUserSettingsContext";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
+import axios from "axios";
 
 interface IProps {
     theme: ThemeProps
@@ -90,12 +91,17 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 icon={{ icon: 'send', pack: 'material' }}
                 disabled={authType === LoginType.PHONE ? !isValidPhoneNumber(phoneInput, countryCode) : !isValidEmail(emailInput)}
                 width="full" text="Get passcode"
-                onPress={() => {
+                onPress={async () => {
                     phoneFormatter.input(phoneInput)
 
                     const primaryAuth = authType === LoginType.PHONE ? phoneFormatter.getNumberValue() : emailInput
 
-                    navigation.navigate('Dashboard')
+                    const r = await axios.get('http://127.0.0.1:8000/preauth/')
+                    const data: { phone_id: string, request_id: string, status_code: number, user_created: boolean, user_id: string } = await r.data
+
+                    console.log(data.request_id)
+
+                    // navigation.navigate('AuthPasscode')
                 }} />
         </View>
     </KeyboardAvoidingView >
