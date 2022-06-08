@@ -24,16 +24,20 @@ routes.get("/", (req, res) => {
 });
 
 routes.get("/preauth/", async (req, res) => {
-	console.log(req.query);
-	const resp = await stytch_client.otps.sms.loginOrCreate({
-		phone_number: "+10000000000",
-	});
+	const userContact = String(req.query.userContact);
+	const resp =
+		String(req.query.authenticationMedium) === "PHONE"
+			? await stytch_client.otps.sms.loginOrCreate({
+					phone_number: "+10000000000",
+			  })
+			: await stytch_client.otps.email.loginOrCreate({
+					email: userContact,
+			  });
 
 	return res.json(resp);
 });
 
 routes.get("/verify-code/", async (req, res) => {
-	console.log(req.query);
 	try {
 		const resp = await stytch_client.otps.authenticate({
 			method_id: String(req.query.methodID),

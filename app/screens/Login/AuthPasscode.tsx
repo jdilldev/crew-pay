@@ -7,8 +7,10 @@ import { KeyboardAvoidingView, Platform, TextInput } from 'react-native'
 import { LoginType, RootStackScreenProps } from '../../types'
 import { ColorContext } from '../../GlobalUserSettingsContext'
 import parsePhoneNumber from 'libphonenumber-js'
+import { AuthenticateResponse } from 'stytch/types/lib/otps'
+import { StytchError } from 'stytch'
 
-const AuthPasscode = ({ route }: RootStackScreenProps<'AuthPasscode'>) => {
+const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'>) => {
     const { methodID } = route.params
     const [passcodeArray, setPasscode] = useState<string[]>([])
     const { countryCode, authType, userPhone, userEmail } = useContext(ColorContext)
@@ -64,11 +66,10 @@ const AuthPasscode = ({ route }: RootStackScreenProps<'AuthPasscode'>) => {
                 text='Verify'
                 onPress={async () => {
                     const passcode = passcodeArray.join('')
-                    const resp = (await axios.get('http://localhost:3333/verify-code/', { params: { methodID, passcode } })).data
+                    const { status_code, user, user_id, method_id, error_type, error_message }: AuthenticateResponse & StytchError = (await axios.get('http://localhost:3333/verify-code/', { params: { methodID, passcode } })).data
 
-                    console.log(resp)
-
-
+                    if (status_code === 200)
+                        navigation.navigate('Dashboard')
                 }} />
         </View>
     </KeyboardAvoidingView>

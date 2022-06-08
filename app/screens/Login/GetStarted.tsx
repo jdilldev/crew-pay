@@ -96,6 +96,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                     const params = { userContact, authenticationMedium: LoginType[authType] }
                     const { phone_id, email_id, user_id } = (await axios.get('http://localhost:3333/preauth/', { params })).data
 
+                    console.log(phone_id)
                     navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
                 }} />
         </View>
