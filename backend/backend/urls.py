@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from stack import views
+from django.views.decorators.csrf import csrf_exempt
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserView, 'user')
@@ -12,4 +13,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('preauth/', views.login_or_create_user),
+    path('verify-code/', views.authenticate_otp),
 ]

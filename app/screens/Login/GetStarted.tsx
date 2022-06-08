@@ -18,6 +18,8 @@ import Login from "./PreAuth";
 import { ColorContext } from "../../GlobalUserSettingsContext";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import axios from "axios";
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+axios.defaults.xsrfCookieName = "csrftoken";
 
 interface IProps {
     theme: ThemeProps
@@ -29,7 +31,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
     const [phoneInput, setPhoneInput] = useState('')
     const [emailInput, setEmailInput] = useState('')
     const { countryCode, authType, setAuthType } = useContext(ColorContext)
-    const phoneFormatter: AsYouType = new AsYouType('US')
+    const phoneFormatter: AsYouType = new AsYouType(countryCode)
 
 
 
@@ -92,16 +94,16 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 disabled={authType === LoginType.PHONE ? !isValidPhoneNumber(phoneInput, countryCode) : !isValidEmail(emailInput)}
                 width="full" text="Get passcode"
                 onPress={async () => {
-                    phoneFormatter.input(phoneInput)
+                    if (authType === LoginType.PHONE)
+                        phoneFormatter.input(phoneInput)
 
-                    const primaryAuth = authType === LoginType.PHONE ? phoneFormatter.getNumberValue() : emailInput
+                    const userContact = authType === LoginType.PHONE ? String(phoneFormatter.getNumberValue()) : emailInput
 
-                    const r = await axios.get('http://127.0.0.1:8000/preauth/')
-                    const data: { phone_id: string, request_id: string, status_code: number, user_created: boolean, user_id: string } = await r.data
+                    const r = await axios.get('http://127.0.0.1:8000/preauth/', { params: { authType: LoginType[authType], value: userContact }, })
+                    const data: { phone_id: string, email_id: string, request_id: string, status_code: number, user_created: boolean, user_id: string } = await r.data
 
-                    console.log(data.request_id)
-
-                    // navigation.navigate('AuthPasscode')
+                    phoneFormatter.getNationalNumber()
+                    navigation.navigate('AuthPasscode', { methodID: data.phone_id || data.email_id, userContact: userContact })
                 }} />
         </View>
     </KeyboardAvoidingView >
