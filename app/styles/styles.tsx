@@ -230,7 +230,7 @@ interface CustomInputProps {
 }
 
 export const PhoneValidationInput = ({ updateInput, previousValue }: CustomInputProps) => {
-  const { countryCode, countryCallingCode, } = useContext(ColorContext)
+  const { countryCode, countryCallingCode } = useContext(ColorContext)
   const [phoneInput, setPhoneInput] = useState(previousValue)
   const [countryPickerVisibility, setCountryPickerVisibility] = useState(false);
 
@@ -244,10 +244,10 @@ export const PhoneValidationInput = ({ updateInput, previousValue }: CustomInput
         phoneFormatter
           .getNumber()!
           .formatInternational()
-          .replace(`+${countryCallingCode} `, '');
 
-      setPhoneInput(formattedNumber)
-      updateInput(formattedNumber)
+
+      setPhoneInput(formattedNumber.replace(`+${countryCallingCode} `, ''))
+      updateInput(parsePhoneNumber(newNumber, countryCode).format('E.164'))
     } else {
       updateInput(newNumber)
     }

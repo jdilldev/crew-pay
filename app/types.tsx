@@ -58,7 +58,7 @@ export type RootStackParamList = {
   NotFound: undefined;
   Login: undefined;
   GetStarted: undefined;
-  AuthPasscode: undefined;
+  AuthPasscode: { methodID: string };
   Dashboard: undefined;
 };
 

@@ -18,6 +18,7 @@ import Login from "./PreAuth";
 import { ColorContext } from "../../GlobalUserSettingsContext";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import axios from 'axios'
+import { SendOTPBySMSResponse, OTPEmailSendResponse } from "stytch/types/lib/otps";
 
 interface IProps {
     theme: ThemeProps
@@ -26,10 +27,9 @@ interface IProps {
 
 
 const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
-    const [phoneInput, setPhoneInput] = useState('')
     const [emailInput, setEmailInput] = useState('')
-    const { countryCode, authType, setAuthType } = useContext(ColorContext)
-    const phoneFormatter: AsYouType = new AsYouType('US')
+    const { countryCode, authType, setAuthType, userPhone, setUserPhone } = useContext(ColorContext)
+    const phoneFormatter: AsYouType = new AsYouType(countryCode)
 
 
 
@@ -66,7 +66,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                     minHeight: 40,
                 }}>
                 {authType === LoginType.EMAIL
-                    ? <EmailValidationInput previousValue={emailInput} updateInput={(val: string) => setEmailInput(val.toLowerCase())} /> : <PhoneValidationInput previousValue={phoneInput} updateInput={(val: string) => setPhoneInput(val)} />}
+                    ? <EmailValidationInput previousValue={emailInput} updateInput={(val: string) => setEmailInput(val.toLowerCase())} /> : <PhoneValidationInput previousValue={userPhone} updateInput={(val: string) => setUserPhone(val)} />}
             </View>
             <View orientation="row" justify="center">
                 <Text
@@ -89,18 +89,14 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 style={{ alignSelf: 'center' }}
                 type='primary'
                 icon={{ icon: 'send', pack: 'material' }}
-                //  disabled={authType === LoginType.PHONE ? !isValidPhoneNumber(phoneInput, countryCode) : !isValidEmail(emailInput)}
+                disabled={authType === LoginType.PHONE ? !isValidPhoneNumber(userPhone, countryCode) : !isValidEmail(emailInput)}
                 width="full" text="Get passcode"
                 onPress={async () => {
-                    phoneFormatter.input(phoneInput)
+                    const userContact = authType === LoginType.PHONE ? userPhone : emailInput
+                    const params = { userContact, authenticationMedium: LoginType[authType] }
+                    const { phone_id, email_id, user_id } = (await axios.get('http://localhost:3333/preauth/', { params })).data
 
-                    const primaryAuth = authType === LoginType.PHONE ? phoneFormatter.getNumberValue() : emailInput
-
-                    const resp = await axios.get('http://localhost:3333/preauth/', { params: { 'ace': 'paste' } })
-
-                    console.log(resp.data)
-
-                    // navigation.navigate('AuthPasscode')
+                    navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
                 }} />
         </View>
     </KeyboardAvoidingView >
