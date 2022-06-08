@@ -18,7 +18,10 @@ const AuthPasscode = () => {
                 }} />
         </View>
         <View flex={1} >
-            <Text align='center'>{'A six-digit code was sent to you at\n(410)-258-0552'}</Text>
+            <View justify='center' align='center'>
+                <Text >{'A six-digit code was sent to you at\n'}</Text>
+                <Text>{'phone'}</Text>
+            </View>
             <View style={{ width: '90%', alignSelf: 'center' }} orientation='row' justify='space-between'>
                 {Array(6).fill(0).map((digit, idx) =>
                     <TextInput key={idx} maxLength={1} keyboardType='numeric' style={{ textAlign: 'center', fontSize: 30, width: 50, height: 50, borderColor: 'black', borderRadius: 5, borderWidth: 1 }} />
