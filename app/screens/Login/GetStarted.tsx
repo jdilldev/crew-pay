@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Dimensions, FlatList, Image, KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, } from "react-native"
 import useColorScheme from "../../hooks/useColorScheme";
 import { View, Text, Button, PhoneValidationInput, CountryPicker, EmailValidationInput, isValidEmail, } from "../../styles/styles";
@@ -19,6 +19,7 @@ import { ColorContext } from "../../GlobalUserSettingsContext";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import axios from 'axios'
 import { SendOTPBySMSResponse, OTPEmailSendResponse } from "stytch/types/lib/otps";
+import { BackHandler } from 'react-native';
 
 interface IProps {
     theme: ThemeProps
@@ -28,9 +29,8 @@ interface IProps {
 
 const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
     const [emailInput, setEmailInput] = useState('')
-    const { countryCode, authType, setAuthType, userPhone, setUserPhone } = useContext(ColorContext)
+    const { countryCode, authType, setAuthType, userPhone, setUserPhone, setUserEmail } = useContext(ColorContext)
     const phoneFormatter: AsYouType = new AsYouType(countryCode)
-
 
 
     return <KeyboardAvoidingView
@@ -94,9 +94,8 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 onPress={async () => {
                     const userContact = authType === LoginType.PHONE ? userPhone : emailInput
                     const params = { userContact, authenticationMedium: LoginType[authType] }
-                    const { phone_id, email_id, user_id } = (await axios.get('http://localhost:3333/preauth/', { params })).data
+                    const { phone_id, email_id, user_id }: SendOTPBySMSResponse & OTPEmailSendResponse = (await axios.get('http://localhost:3333/preauth/', { params })).data
 
-                    console.log(phone_id)
                     navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
                 }} />
         </View>

@@ -7,7 +7,7 @@ import { ColorContext } from "../../GlobalUserSettingsContext";
 
 
 const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
-    const { setAuthType } = useContext(ColorContext)
+    const { setAuthType, setUserEmail, setUserPhone } = useContext(ColorContext)
 
     return (
         <View flex={1} style={{ paddingHorizontal: 20 }}>
@@ -35,6 +35,7 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     }}
                     onPress={() => {
                         setAuthType(LoginType.PHONE)
+                        setUserPhone('')
                         navigation.navigate('GetStarted')
                     }} />
                 <Button
@@ -47,6 +48,7 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                         icon: 'email', pack: 'zocial'
                     }} onPress={() => {
                         setAuthType(LoginType.EMAIL)
+                        setUserEmail('')
                         navigation.navigate('GetStarted')
                     }} />
 
