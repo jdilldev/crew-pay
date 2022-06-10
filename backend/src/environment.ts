@@ -1,7 +1,9 @@
 type Environment = {
-	secretMessage: string;
+	STYTCH_PROJECT_ID: string;
+	STYTCH_SECRET: string;
 };
 
-export const environment: Environment = {
-	secretMessage: process.env.SECRET_MESSAGE as string,
+export default {
+	STYTCH_PROJECT_ID: String(process.env.STYTCH_PROJECT_ID),
+	STYTCH_SECRET: String(process.env.STYTCH_SECRET),
 };
