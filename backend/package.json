@@ -18,6 +18,7 @@
     "aws-sdk": "^2.1152.0",
     "graphql": "^16.5.0",
     "node-fetch": "2",
+    "realm": "^10.19.1",
     "serverless": "^3.19.0"
   }
 }
