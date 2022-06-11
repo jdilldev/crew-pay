@@ -1,25 +1,18 @@
-import React, { useContext, useEffect, useState } from "react"
-import { Dimensions, FlatList, Image, KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, } from "react-native"
-import useColorScheme from "../../hooks/useColorScheme";
-import { View, Text, Button, PhoneValidationInput, CountryPicker, EmailValidationInput, isValidEmail, } from "../../styles/styles";
+import React, { useContext, useState } from "react"
+import { Image, KeyboardAvoidingView, Platform } from "react-native"
+import { View, Text, Button, PhoneValidationInput, EmailValidationInput, isValidEmail, } from "../../styles/styles";
 import {
-    parsePhoneNumber,
     AsYouType,
-    getCountryCallingCode,
-    isSupportedCountry,
-    isValidNumberForRegion,
-    CountryCallingCode,
     isValidPhoneNumber,
-    CountryCode,
+
 } from 'libphonenumber-js'
 import Logo from '../../assets/svgs/receiving-message.svg'
 import { LoginType, RootStackScreenProps, ThemeProps } from "../../types";
-import Login from "./PreAuth";
 import { ColorContext } from "../../GlobalUserSettingsContext";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import axios from 'axios'
 import { SendOTPBySMSResponse, OTPEmailSendResponse } from "stytch/types/lib/otps";
-import { BackHandler } from 'react-native';
+import { useStytchSMS } from "../../hooks/useStytch";
 
 interface IProps {
     theme: ThemeProps
@@ -32,7 +25,9 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
     const { countryCode, authType, setAuthType, userPhone, setUserPhone, setUserEmail } = useContext(ColorContext)
     const phoneFormatter: AsYouType = new AsYouType(countryCode)
 
+    const { data, isLoading, isSuccess, status } = useStytchSMS('scer');
 
+    console.log(data)
     return <KeyboardAvoidingView
         style={{ flex: 1, flexGrow: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>

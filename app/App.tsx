@@ -7,7 +7,10 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { LoginType } from './types';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
+
+const queryClient = new QueryClient();
 
 const App = () => {
   const isLoadingComplete = useCachedResources();
@@ -23,14 +26,15 @@ const App = () => {
   if (!isLoadingComplete) {
     return null;
   }
-  return <ColorContext.Provider
-    value={{ userEmail, userPhone, countryCode, countryCallingCode, authType, setUserEmail, setUserPhone, setCountryCallingCode, setCountryCode, setAuthType }}>
-    <SafeAreaProvider>
-      <Navigation colorScheme={colorScheme} />
-      <StatusBar />
-    </SafeAreaProvider>
-  </ColorContext.Provider>
-
+  return <QueryClientProvider client={queryClient}>
+    <ColorContext.Provider
+      value={{ userEmail, userPhone, countryCode, countryCallingCode, authType, setUserEmail, setUserPhone, setCountryCallingCode, setCountryCode, setAuthType }}>
+      <SafeAreaProvider>
+        <Navigation colorScheme={colorScheme} />
+        <StatusBar />
+      </SafeAreaProvider>
+    </ColorContext.Provider>
+  </QueryClientProvider>
 }
 
 export default App;
