@@ -16,10 +16,6 @@ functions:
           method: get
           cors: true
 plugins:
+  - serverless-bundle # Package our functions with Webpack
   - serverless-dotenv-plugin
-  - serverless-webpack
   - serverless-offline
-
-custom:
-  webpack:
-    includeModules: true

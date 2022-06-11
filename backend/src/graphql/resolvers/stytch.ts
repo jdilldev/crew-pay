@@ -25,8 +25,8 @@ type AuthenticateArgs = {
 
 export const resolvers = {
 	Query: {
-		loginOrCreateSMS: async (_: any, { phoneNumber }: LoginOrCreateArgs) => {
-			console.log(phoneNumber);
+		loginOrCreateSMS: async (_: any, args: LoginOrCreateArgs) => {
+			console.log(args);
 			const { phone_id, user_id } = await stytch_client.otps.sms.loginOrCreate({
 				phone_number: "+10000000000",
 			});

@@ -10,6 +10,11 @@
       "region": "us-east-1",
       "stage": "dev",
       "versionFunctions": true,
+      "environment": {
+        "SECRET_MESSAGE": "Secret message for DEV!",
+        "STYTCH_PROJECT_ID": "project-test-13496046-df40-4e23-8b8b-8657f0adc929",
+        "STYTCH_SECRET": "secret-test-Wu9wtr2t-7HXiqSFZfazrH1Erj2qIs5-ry0="
+      },
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
@@ -86,7 +91,7 @@
           "GraphqlLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/backend-prod-graphql"
+              "LogGroupName": "/aws/lambda/backend-dev-graphql"
             }
           },
           "IamRoleLambdaExecution": {
@@ -115,7 +120,7 @@
                       "-",
                       [
                         "backend",
-                        "prod",
+                        "dev",
                         "lambda"
                       ]
                     ]
@@ -131,7 +136,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/backend-prod*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/backend-dev*:*"
                           }
                         ]
                       },
@@ -142,7 +147,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/backend-prod*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/backend-dev*:*:*"
                           }
                         ]
                       }
@@ -156,7 +161,7 @@
                   "-",
                   [
                     "backend",
-                    "prod",
+                    "dev",
                     {
                       "Ref": "AWS::Region"
                     },
@@ -173,13 +178,20 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/backend/prod/1654797047437-2022-06-09T17:50:47.437Z/backend.zip"
+                "S3Key": "serverless/backend/dev/1654969103352-2022-06-11T17:38:23.352Z/backend.zip"
               },
               "Handler": "src/apollo-server.graphqlHandler",
               "Runtime": "nodejs16.x",
-              "FunctionName": "backend-prod-graphql",
+              "FunctionName": "backend-dev-graphql",
               "MemorySize": 1024,
               "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "SECRET_MESSAGE": "Secret message for DEV!",
+                  "STYTCH_PROJECT_ID": "project-test-13496046-df40-4e23-8b8b-8657f0adc929",
+                  "STYTCH_SECRET": "secret-test-Wu9wtr2t-7HXiqSFZfazrH1Erj2qIs5-ry0="
+                }
+              },
               "Role": {
                 "Fn::GetAtt": [
                   "IamRoleLambdaExecution",
@@ -191,20 +203,20 @@
               "GraphqlLogGroup"
             ]
           },
-          "GraphqlLambdaVersionR8Plpe3eXuphobU0wLRd9KDpqKg6QbNnBJTyiplKBs": {
+          "GraphqlLambdaVersionPkTQF4kiUbgZXxVPPYSTGPyTV0obKMNGXEsJdnDzrlA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GraphqlLambdaFunction"
               },
-              "CodeSha256": "mrRdLf2uMnNo2JRfb7QROe6CXNC6xrLUkdDDUS5lJKo="
+              "CodeSha256": "Wsz9WgcnU1CgddnLu+JRtQ92DmoIpvMLKR3VHOq6LRY="
             }
           },
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "prod-backend",
+              "Name": "dev-backend",
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -365,13 +377,13 @@
               "GraphqlLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1654797042743": {
+          "ApiGatewayDeployment1654969098527": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               },
-              "StageName": "prod"
+              "StageName": "dev"
             },
             "DependsOn": [
               "ApiGatewayMethodGraphqlOptions",
@@ -423,16 +435,16 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-backend-prod-ServerlessDeploymentBucketName"
+              "Name": "sls-backend-dev-ServerlessDeploymentBucketName"
             }
           },
           "GraphqlLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GraphqlLambdaVersionR8Plpe3eXuphobU0wLRd9KDpqKg6QbNnBJTyiplKBs"
+              "Ref": "GraphqlLambdaVersionPkTQF4kiUbgZXxVPPYSTGPyTV0obKMNGXEsJdnDzrlA"
             },
             "Export": {
-              "Name": "sls-backend-prod-GraphqlLambdaFunctionQualifiedArn"
+              "Name": "sls-backend-dev-GraphqlLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -453,12 +465,12 @@
                   {
                     "Ref": "AWS::URLSuffix"
                   },
-                  "/prod"
+                  "/dev"
                 ]
               ]
             },
             "Export": {
-              "Name": "sls-backend-prod-ServiceEndpoint"
+              "Name": "sls-backend-dev-ServiceEndpoint"
             }
           }
         }
@@ -549,11 +561,25 @@
     },
     "custom": {
       "webpack": {
-        "includeModules": true
+        "packager": "npm",
+        "packagerOptions": {},
+        "webpackConfig": "node_modules/serverless-bundle/src/webpack.config.js",
+        "includeModules": {
+          "forceExclude": [
+            "aws-sdk"
+          ],
+          "forceInclude": null,
+          "packagePath": "package.json"
+        },
+        "excludeFiles": null,
+        "excludeRegex": {},
+        "keepOutputDirectory": false
       }
     },
     "plugins": [
-      "serverless-webpack"
+      "serverless-bundle",
+      "serverless-dotenv-plugin",
+      "serverless-offline"
     ],
     "pluginsData": {},
     "functions": {
@@ -607,7 +633,7 @@
             }
           }
         ],
-        "name": "backend-prod-graphql",
+        "name": "backend-dev-graphql",
         "package": {
           "artifact": ".serverless/backend.zip"
         },
@@ -615,7 +641,7 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "GraphqlLambdaVersionR8Plpe3eXuphobU0wLRd9KDpqKg6QbNnBJTyiplKBs"
+        "versionLogicalId": "GraphqlLambdaVersionPkTQF4kiUbgZXxVPPYSTGPyTV0obKMNGXEsJdnDzrlA"
       }
     },
     "configValidationMode": "warn",
@@ -630,16 +656,13 @@
       },
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
-      },
-      "custom": {
-        "$ref": "$[\"service\"][\"custom\"]"
       }
     },
     "layers": {},
     "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/backend/prod/1654797047437-2022-06-09T17:50:47.437Z",
+    "artifactDirectoryName": "serverless/backend/dev/1654969103352-2022-06-11T17:38:23.352Z",
     "artifact": ""
   }
 }
