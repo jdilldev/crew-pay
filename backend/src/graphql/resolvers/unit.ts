@@ -1,7 +1,7 @@
 export const resolvers = {
 	Query: {
-		getZoe: () => "zoe",
-		getLandon: () => "Landon",
-		getMoney: () => 1000000000,
+		getZoe: (): string => "zoe",
+		getLandon: (): string => "Landon",
+		getMoney: (): number => 1000000000,
 	},
 };

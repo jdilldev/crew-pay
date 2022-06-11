@@ -18,28 +18,49 @@ type LoginOrCreateArgs = {
 	email?: string;
 };
 
+type LoginOrCreateResponse = {
+	phone_id?: string;
+	email_id?: string;
+	user_id: string;
+};
+
 type AuthenticateArgs = {
 	methodId: string;
 	code: string;
 };
 
+type AuthenticateResponse = {
+	status_code: number;
+	error_message?: string;
+	error_type?: string;
+};
+
 export const resolvers = {
 	Query: {
-		loginOrCreateSMS: async (_: any, args: LoginOrCreateArgs) => {
+		loginOrCreateSMS: async (
+			_: undefined,
+			args: LoginOrCreateArgs
+		): Promise<LoginOrCreateResponse> => {
 			console.log(args);
 			const { phone_id, user_id } = await stytch_client.otps.sms.loginOrCreate({
 				phone_number: "+10000000000",
 			});
 			return { phone_id, user_id };
 		},
-		loginOrCreateEmail: async (_: any, { email }: LoginOrCreateArgs) => {
+		loginOrCreateEmail: async (
+			_: undefined,
+			{ email }: LoginOrCreateArgs
+		): Promise<LoginOrCreateResponse> => {
 			const { email_id, user_id } =
 				await stytch_client.otps.email.loginOrCreate({
 					email: email || "",
 				});
 			return { email_id, user_id };
 		},
-		authenticateOTP: async (_: any, { methodId, code }: AuthenticateArgs) => {
+		authenticateOTP: async (
+			_: undefined,
+			{ methodId, code }: AuthenticateArgs
+		): Promise<AuthenticateResponse> => {
 			try {
 				const { user, status_code } = await stytch_client.otps.authenticate({
 					method_id: "phone-number-test-98cfbe19-6c8f-4b8b-b62a-e78a5a7bdff3",
@@ -54,7 +75,7 @@ export const resolvers = {
 		},
 	},
 	AuthenticateResponse: {
-		__resolveType: (obj: { status_code: number }) => {
+		__resolveType: (obj: { status_code: number }): string => {
 			if (obj.status_code === 200) {
 				return "StatusCode";
 			} else {
