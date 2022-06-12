@@ -8,12 +8,25 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { LoginType } from './types';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import RealmContext from './database'
+
+//get RealmProvider from RealmContext created
+const { RealmProvider, useRealm } = RealmContext
 
 
+// query client for react-query
 const queryClient = new QueryClient();
 
+/* const syncConfig = {
+  user: app?.currentUser,
+  partitionValue: 'ExpoTemplate',
+}; */
+
+
 const App = () => {
+  //react native default
   const isLoadingComplete = useCachedResources();
+  //react native default
   const colorScheme = useColorScheme();
 
   const [userPhone, setUserPhone] = useState('')
@@ -26,15 +39,17 @@ const App = () => {
   if (!isLoadingComplete) {
     return null;
   }
-  return <QueryClientProvider client={queryClient}>
-    <ColorContext.Provider
-      value={{ userEmail, userPhone, countryCode, countryCallingCode, authType, setUserEmail, setUserPhone, setCountryCallingCode, setCountryCode, setAuthType }}>
-      <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </SafeAreaProvider>
-    </ColorContext.Provider>
-  </QueryClientProvider>
+  return <RealmProvider /* sync={syncConfig} fallback={() => <LoadingSpinner />} */>
+    <QueryClientProvider client={queryClient}>
+      <ColorContext.Provider
+        value={{ userEmail, userPhone, countryCode, countryCallingCode, authType, setUserEmail, setUserPhone, setCountryCallingCode, setCountryCode, setAuthType }}>
+        <SafeAreaProvider>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </SafeAreaProvider>
+      </ColorContext.Provider>
+    </QueryClientProvider>
+  </RealmProvider>
 }
 
 export default App;

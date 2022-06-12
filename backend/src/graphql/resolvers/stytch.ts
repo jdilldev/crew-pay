@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import { SendOTPBySMSResponse } from "stytch/types/lib/otps";
 import { StytchError } from "stytch";
 import environment from "../../environment";
-
 //load environment variables
 dotenv.config();
 
@@ -30,6 +29,7 @@ export const resolvers = {
 			const { phone_id, user_id } = await stytch_client.otps.sms.loginOrCreate({
 				phone_number: "+10000000000",
 			});
+
 			return { phone_id, user_id };
 		},
 		loginOrCreateEmail: async (_: any, { email }: LoginOrCreateArgs) => {

@@ -1,10 +1,9 @@
-import React, { useContext, useState } from "react"
+import React, { useCallback, useContext, useState } from "react"
 import { Image, KeyboardAvoidingView, Platform } from "react-native"
 import { View, Text, Button, PhoneValidationInput, EmailValidationInput, isValidEmail, } from "../../styles/styles";
 import {
     AsYouType,
     isValidPhoneNumber,
-
 } from 'libphonenumber-js'
 import Logo from '../../assets/svgs/receiving-message.svg'
 import { LoginType, RootStackScreenProps, ThemeProps } from "../../types";
@@ -13,6 +12,10 @@ import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import axios from 'axios'
 import { SendOTPBySMSResponse, OTPEmailSendResponse } from "stytch/types/lib/otps";
 import { useStytchSMS } from "../../hooks/useStytch";
+import RealmContext, { Task, User } from '../../database'
+import { Realm, createRealmContext } from "@realm/react";
+import { addUser } from "../../database/services/user";
+
 
 interface IProps {
     theme: ThemeProps
@@ -20,14 +23,21 @@ interface IProps {
 }
 
 
+
 const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
     const [emailInput, setEmailInput] = useState('')
     const { countryCode, authType, setAuthType, userPhone, setUserPhone, setUserEmail } = useContext(ColorContext)
     const phoneFormatter: AsYouType = new AsYouType(countryCode)
+    const { useRealm, useQuery, useObject } = RealmContext;
 
-    const { data, isLoading, isSuccess, status } = useStytchSMS('scer');
+    // const { data, isLoading, isSuccess, status } = useStytchSMS('scer');
+    const realm: any = useRealm();
 
-    console.log(data)
+    addUser({ _id: 'pour', nationality: 'UK' })
+    console.log(realm.objects('User'))
+
+
+
     return <KeyboardAvoidingView
         style={{ flex: 1, flexGrow: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>

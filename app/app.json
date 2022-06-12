@@ -3,6 +3,15 @@
     "name": "crew-pay",
     "slug": "crew-pay",
     "version": "1.0.0",
+    "sdkVersion": "45.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "ios": {
+      "bundleIdentifier": "ios",
+      "supportsTablet": true
+    },
     "orientation": "portrait",
     "icon": "./assets/images/real/birds-eye-food.jpg",
     "scheme": "myapp",
@@ -18,9 +27,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/real/birds-eye-food.jpg",

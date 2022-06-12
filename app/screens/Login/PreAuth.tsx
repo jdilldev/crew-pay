@@ -49,7 +49,7 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     }} onPress={() => {
                         setAuthType(LoginType.EMAIL)
                         setUserEmail('')
-                        navigation.navigate('GetStarted')
+
                     }} />
 
                 <View style={{ flex: .6 }} orientation="column" >

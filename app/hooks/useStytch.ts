@@ -2,8 +2,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import { request, gql } from "graphql-request";
 
-const endpoint =
-	"https://jrci7wx41l.execute-api.us-east-1.amazonaws.com/dev/graphql";
+const endpoint = "http://localhost:3000/dev/graphql";
 const otpSMS = (phone: string) => {
 	return request(
 		endpoint,
