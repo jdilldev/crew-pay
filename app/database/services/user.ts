@@ -1,20 +1,27 @@
 import RealmContext from "../index";
-import User from "../models/User";
 
 const { useRealm } = RealmContext;
 
 export const addUser = ({
 	_id,
 	nationality,
+	phone,
+	email,
 }: {
 	_id: string;
 	nationality: string;
+	phone?: string;
+	email?: string;
 }) => {
 	const realm = useRealm();
 
-	realm.write(() => {
-		realm.create("User", User.generate(_id, nationality));
-	});
+	try {
+		realm.write(() => {
+			realm.create("User", { _id, nationality, phone, email });
+		});
+	} catch (err) {
+		console.log("Error creating User: " + err);
+	}
 };
 
 export const getUser = (_id: string) => {

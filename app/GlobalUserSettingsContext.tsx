@@ -1,5 +1,5 @@
 import { CountryCallingCode, CountryCode } from 'libphonenumber-js';
-import React, { Component, createContext, ReactChildren, ReactNode, useState } from "react";
+import create from 'zustand'
 import { LoginType } from './types';
 
 interface GlobalUserSettingsContext {
@@ -17,14 +17,19 @@ interface GlobalUserSettingsContext {
     setLanguage?: (val: string) => void
 
 }
-export const initialGlobalContext = {
-    userEmail: '',
+
+export const useStore = create<GlobalUserSettingsContext>(set => ({
     userPhone: '',
+    userEmail: '',
     countryCode: 'US',
     countryCallingCode: '1',
     authType: LoginType.PHONE,
     language: 'en',
-}
-
-
-export const ColorContext = createContext({} as GlobalUserSettingsContext);
+    setUserPhone: (phoneNumber: string) => set({ userPhone: phoneNumber }),
+    setUserEmail: (email: string) => set({ userEmail: email }),
+    setCountryCode: (countryCode: CountryCode) => set({ countryCode }),
+    setCountryCallingCode: (countryCallingCode: CountryCallingCode) => set({ countryCallingCode }),
+    setAuthType: (authType: LoginType) => set({ authType }),
+    setLanguage: (language: string) => set({ language }),
+    deleteEverything: () => set({}, true), // clears the entire store, actions included
+}))

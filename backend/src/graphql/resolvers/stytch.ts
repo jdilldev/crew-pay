@@ -24,26 +24,37 @@ type AuthenticateArgs = {
 
 export const resolvers = {
 	Query: {
-		loginOrCreateSMS: async (_: any, args: LoginOrCreateArgs) => {
-			console.log(args);
-			const { phone_id, user_id } = await stytch_client.otps.sms.loginOrCreate({
-				phone_number: "+10000000000",
-			});
-
-			return { phone_id, user_id };
-		},
-		loginOrCreateEmail: async (_: any, { email }: LoginOrCreateArgs) => {
-			const { email_id, user_id } =
-				await stytch_client.otps.email.loginOrCreate({
-					email: email || "",
+		loginOrCreateSMS: async (
+			_: undefined,
+			{ phoneNumber }: LoginOrCreateArgs
+		) => {
+			const { phone_id, user_id, status_code } =
+				await stytch_client.otps.sms.loginOrCreate({
+					phone_number: phoneNumber,
 				});
-			return { email_id, user_id };
+
+			return { phone_id, user_id, status_code };
 		},
-		authenticateOTP: async (_: any, { methodId, code }: AuthenticateArgs) => {
+		loginOrCreateEmail: async (_: undefined, { email }: LoginOrCreateArgs) => {
+			try {
+				const { email_id, user_id, status_code } =
+					await stytch_client.otps.email.loginOrCreate({
+						email: email,
+					});
+				return { email_id, user_id, status_code };
+			} catch (err) {
+				const { error_message, error_type, status_code } = err as StytchError;
+				return { error_message, error_type, status_code };
+			}
+		},
+		authenticateOTP: async (
+			_: undefined,
+			{ methodId, code }: AuthenticateArgs
+		) => {
 			try {
 				const { user, status_code } = await stytch_client.otps.authenticate({
-					method_id: "phone-number-test-98cfbe19-6c8f-4b8b-b62a-e78a5a7bdff3",
-					code: "000000",
+					method_id: methodId,
+					code: code,
 				});
 
 				return { status_code };
@@ -57,6 +68,15 @@ export const resolvers = {
 		__resolveType: (obj: { status_code: number }) => {
 			if (obj.status_code === 200) {
 				return "StatusCode";
+			} else {
+				return "StytchError";
+			}
+		},
+	},
+	OTPResponse: {
+		__resolveType: (obj: { status_code: number }) => {
+			if (obj.status_code === 200) {
+				return "LoginOrCreateResponse";
 			} else {
 				return "StytchError";
 			}

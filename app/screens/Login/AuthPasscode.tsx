@@ -1,19 +1,39 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, Button } from '../../styles/styles'
 import axios from 'axios'
 import OTP from '../../assets/svgs/OTP-phone.svg'
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import { KeyboardAvoidingView, Platform, TextInput } from 'react-native'
 import { LoginType, RootStackScreenProps } from '../../types'
-import { ColorContext } from '../../GlobalUserSettingsContext'
 import parsePhoneNumber from 'libphonenumber-js'
 import { AuthenticateResponse } from 'stytch/types/lib/otps'
-import { StytchError } from 'stytch'
+import { useStore } from '../../GlobalUserSettingsContext'
+import { useAuthOTP } from '../../hooks/useStytch'
 
 const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'>) => {
     const { methodID } = route.params
     const [passcodeArray, setPasscode] = useState<string[]>([])
-    const { countryCode, authType, userPhone, userEmail } = useContext(ColorContext)
+    const { countryCode, authType, userPhone, userEmail } = useStore()
+    const { data, refetch, isSuccess, } = useAuthOTP(methodID, passcodeArray.join(''), !(passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6))
+    const [error, setError] = useState('')
+
+    useEffect(() => {
+        if (data) {
+            const { status_code } = data
+            if (status_code === 200)
+                navigation.navigate('Dashboard')
+            else {
+                const { error_message } = data
+                setError(error_message)
+            }
+        }
+    }, [data])
+
+    useEffect(() => {
+        if (!(passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6))
+            refetch()
+    }, [passcodeArray])
+
 
     return <KeyboardAvoidingView
         style={{ display: 'flex', flex: 1, flexDirection: 'column', marginTop: 30 }}
@@ -32,20 +52,23 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
                 <Text>{authType === LoginType.PHONE ? parsePhoneNumber(userPhone, countryCode)?.formatInternational() : userEmail}</Text>
             </View>
             <View style={{ width: '90%', alignSelf: 'center' }} orientation='row' justify='space-between' spacing={true}>
-                {Array(6).fill(0).map((digit, idx) =>
+                {Array(6).fill(-1).map((digit, idx) =>
                     <TextInput
                         key={idx}
                         maxLength={1}
                         keyboardType='numeric'
                         value={passcodeArray[idx]}
-                        onChangeText={e => {
-                            if (!isNaN(+e)) {
-                                const tmpArr = [...passcodeArray]
+                        onKeyPress={({ nativeEvent }) => {
+                            //check if key pressed is back space
+                            //check array passcode is valid
+                            //refetch
+                            const tmpArr = [...passcodeArray]
+                            tmpArr[idx] = (!isNaN(+nativeEvent.key)) ? nativeEvent.key : ''
+                            setPasscode(tmpArr)
 
-                                tmpArr[idx] = e
+                            if (!(passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6 || isNaN(+nativeEvent.key) || nativeEvent.key === 'Backspace')) {
                                 setPasscode(tmpArr)
                             }
-
                         }}
                         style={{
                             textAlign: 'center',
@@ -57,20 +80,21 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
                             borderWidth: 1
                         }} />
                 )}
+
             </View>
+            {
+                error ? <Text align='center' type='error'>{error}</Text> : null
+            }
             <Text size='small' style={{ marginLeft: 5, }}>Didn't get a code? Click here to resend.</Text>
-            <Button
-                disabled={passcodeArray.some(entry => entry === '')}
+
+            {/* <Button
+                disabled={passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6}
                 style={{ alignSelf: 'center' }}
                 width='medium'
                 text='Verify'
-                onPress={async () => {
-                    const passcode = passcodeArray.join('')
-                    const { status_code, user, user_id, method_id, error_type, error_message }: AuthenticateResponse & StytchError = (await axios.get('http://localhost:3333/verify-code/', { params: { methodID, passcode } })).data
-
-                    if (status_code === 200)
-                        navigation.navigate('Dashboard')
-                }} />
+                onPress={() => {
+                    refetch()
+                }} /> */}
         </View>
     </KeyboardAvoidingView>
 }

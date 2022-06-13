@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View as DefaultView,
@@ -25,7 +25,7 @@ import { ButtonProps, LoginType } from '../types';
 import { TextProps, ViewProps, useThemeColor, IconProps, IconTypes, IoniconTypes, MaterialIconTypes, ZocialIconTypes, SimpleIconTypes } from '../types';
 import { Ionicons, MaterialIcons, SimpleLineIcons, Zocial } from '@expo/vector-icons';
 import { COUNTRY_DATA } from '../constants/Constants';
-import { ColorContext } from '../GlobalUserSettingsContext';
+import { useStore } from '../GlobalUserSettingsContext';
 
 const FontSize = {
   'small': 12,
@@ -224,15 +224,12 @@ export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, 
 )
 
 
-interface CustomInputProps {
-  updateInput: (val: string) => void
-  previousValue: string,
-}
 
-export const PhoneValidationInput = ({ updateInput, previousValue }: CustomInputProps) => {
-  const { countryCode, countryCallingCode } = useContext(ColorContext)
-  const [phoneInput, setPhoneInput] = useState(previousValue)
+
+export const PhoneValidationInput = () => {
+  const [phoneInput, setPhoneInput] = useState('')
   const [countryPickerVisibility, setCountryPickerVisibility] = useState(false);
+  const { countryCode, countryCallingCode, setUserPhone } = useStore()
 
   const phoneFormatter: AsYouType = new AsYouType(countryCode)
 
@@ -247,9 +244,9 @@ export const PhoneValidationInput = ({ updateInput, previousValue }: CustomInput
 
 
       setPhoneInput(formattedNumber.replace(`+${countryCallingCode} `, ''))
-      updateInput(parsePhoneNumber(newNumber, countryCode).format('E.164'))
+      setUserPhone(parsePhoneNumber(newNumber, countryCode).format('E.164'))
     } else {
-      updateInput(newNumber)
+      setUserPhone(newNumber)
     }
   }
 
@@ -296,16 +293,16 @@ export const isValidEmail = (emailAddress: string) => {
   return (re.test(emailAddress)) ? true : false
 }
 
-export const EmailValidationInput = ({ updateInput, previousValue }: CustomInputProps) => {
-  const { countryCode, } = useContext(ColorContext)
-  const [emailInput, setEmailInput] = useState(previousValue)
+export const EmailValidationInput = () => {
+  const [emailInput, setEmailInput] = useState('')
   const [countryPickerVisibility, setCountryPickerVisibility] = useState(false);
+  const { countryCode, setUserEmail } = useStore()
 
 
   const handleEmailChange = (newEmail: string) => {
     const trimmedEmail = newEmail.trim().toLowerCase()
 
-    updateInput(newEmail)
+    setUserEmail(trimmedEmail)
     setEmailInput(trimmedEmail)
   }
 
@@ -338,9 +335,9 @@ interface ICountryPickerProps {
   updateVisibility: (visibility: boolean) => void
 }
 export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProps) => {
-  const { setCountryCallingCode, setCountryCode } = useContext(ColorContext)
   const [countrySearch, setCountrySearch] = useState('')
   const [preSelectedCountry, setPreSelectedCountry] = useState('')
+  const { setCountryCallingCode, setCountryCode } = useStore()
 
   const handleCountryChange = (newCountry: string) => {
     const newCountryAsCountryCode = newCountry.toUpperCase() as CountryCode

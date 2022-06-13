@@ -2,8 +2,8 @@ import { gql } from "apollo-server-lambda";
 
 export const typeDefs = gql`
 	type Query {
-		loginOrCreateSMS(phoneNumber: String): LoginOrCreateResponse
-		loginOrCreateEmail(email: String): LoginOrCreateResponse
+		loginOrCreateSMS(phoneNumber: String): OTPResponse
+		loginOrCreateEmail(email: String): OTPResponse
 		authenticateOTP(methodId: String, code: String): AuthenticateResponse
 	}
 
@@ -13,8 +13,10 @@ export const typeDefs = gql`
 	}
 
 	union AuthenticateResponse = StatusCode | StytchError
+	union OTPResponse = LoginOrCreateResponse | StytchError
 
 	type LoginOrCreateResponse {
+		status_code: Int
 		phone_id: String
 		email_id: String
 		user_id: String!

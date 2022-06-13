@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Image, KeyboardAvoidingView, Platform } from "react-native"
 import { View, Text, Button, PhoneValidationInput, EmailValidationInput, isValidEmail, } from "../../styles/styles";
 import {
@@ -7,35 +7,56 @@ import {
 } from 'libphonenumber-js'
 import Logo from '../../assets/svgs/receiving-message.svg'
 import { LoginType, RootStackScreenProps, ThemeProps } from "../../types";
-import { ColorContext } from "../../GlobalUserSettingsContext";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import axios from 'axios'
 import { SendOTPBySMSResponse, OTPEmailSendResponse } from "stytch/types/lib/otps";
-import { useStytchSMS } from "../../hooks/useStytch";
-import RealmContext, { Task, User } from '../../database'
+import { useStytchEmail, useStytchSMS } from "../../hooks/useStytch";
+import RealmContext, { User } from '../../database'
 import { Realm, createRealmContext } from "@realm/react";
 import { addUser } from "../../database/services/user";
+import { useStore } from '../../GlobalUserSettingsContext'
 
-
-interface IProps {
-    theme: ThemeProps
-    navigation: RootStackScreenProps<'GetStarted'>
-}
-
-
+const { useRealm, useQuery, useObject } = RealmContext
 
 const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
-    const [emailInput, setEmailInput] = useState('')
-    const { countryCode, authType, setAuthType, userPhone, setUserPhone, setUserEmail } = useContext(ColorContext)
-    const phoneFormatter: AsYouType = new AsYouType(countryCode)
-    const { useRealm, useQuery, useObject } = RealmContext;
+    const realm: Realm = useRealm();
+    const { countryCode, authType, setAuthType, userPhone, userEmail } = useStore()
+    const requestPasscode = authType === LoginType.PHONE ? isValidPhoneNumber(userPhone, countryCode) : isValidEmail(userEmail)
+    const { data, refetch, isSuccess, } = authType === LoginType.PHONE ? useStytchSMS(userPhone, false) : useStytchEmail(userEmail, false)
+    const [error, setError] = useState('')
+    /*     realm.write(() => {
+            realm.delete(realm.objects("User"));
+        });
+        addUser({ _id: '1', nationality: 'UK', phone: '447974653565' })
+    
+        addUser({ _id: '2', nationality: 'AU', email: 'j@b.com' })
+        addUser({ _id: '3', nationality: 'US', })
+    
+    
+     */
+    // addUser({ _id: 'pour', nationality: 'UK' })
 
-    // const { data, isLoading, isSuccess, status } = useStytchSMS('scer');
-    const realm: any = useRealm();
+    /*     const t = useObject<User>('User', '3')
+        if (t) {
+            realm.write(() => {
+                t.dob = 'january birthday'
+            })
+        } */
 
-    addUser({ _id: 'pour', nationality: 'UK' })
-    console.log(realm.objects('User'))
+    //  console.log(realm.objects('User'))
 
+    // console.log(useObject('User', '3'))
+    useEffect(() => {
+        if (isSuccess) {
+            const { error_message, error_type } = data
+            if (error_message) {
+                setError(error_message)
+            } else {
+                const { phone_id, email_id } = data
+                navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
+            }
+        }
+    }, [isSuccess, data])
 
 
     return <KeyboardAvoidingView
@@ -57,6 +78,9 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
         <View flex={1} style={{ padding: 10 }}>
             <Text size="medium" thickness="bold">Choose login method</Text>
             <Text size='default' spacing={false}>We will send a one-time, 4-digit passcode to make sure it is really you.</Text>
+            {error ?
+                <Text type="error">{error}</Text> : null
+            }
             <View
                 //justify="center"
                 spacing={true}
@@ -71,7 +95,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                     minHeight: 40,
                 }}>
                 {authType === LoginType.EMAIL
-                    ? <EmailValidationInput previousValue={emailInput} updateInput={(val: string) => setEmailInput(val.toLowerCase())} /> : <PhoneValidationInput previousValue={userPhone} updateInput={(val: string) => setUserPhone(val)} />}
+                    ? <EmailValidationInput /> : <PhoneValidationInput />}
             </View>
             <View orientation="row" justify="center">
                 <Text
@@ -94,16 +118,13 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 style={{ alignSelf: 'center' }}
                 type='primary'
                 icon={{ icon: 'send', pack: 'material' }}
-                disabled={authType === LoginType.PHONE ? !isValidPhoneNumber(userPhone, countryCode) : !isValidEmail(emailInput)}
+                disabled={!requestPasscode}
                 width="full" text="Get passcode"
-                onPress={async () => {
-                    const userContact = authType === LoginType.PHONE ? userPhone : emailInput
-                    const params = { userContact, authenticationMedium: LoginType[authType] }
-                    const { phone_id, email_id, user_id }: SendOTPBySMSResponse & OTPEmailSendResponse = (await axios.get('http://localhost:3333/preauth/', { params })).data
-
-                    navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
+                onPress={() => {
+                    refetch()
                 }} />
         </View>
+
     </KeyboardAvoidingView >
 }
 

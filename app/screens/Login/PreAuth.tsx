@@ -3,11 +3,11 @@ import { Platform, Image, Pressable } from "react-native"
 import LottieView from 'lottie-react-native';
 import { View, Text, Button } from '../../styles/styles';
 import { LoginType, RootStackScreenProps } from "../../types";
-import { ColorContext } from "../../GlobalUserSettingsContext";
+import { useStore } from '../../GlobalUserSettingsContext'
 
 
 const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
-    const { setAuthType, setUserEmail, setUserPhone } = useContext(ColorContext)
+    const { setAuthType, setUserEmail, setUserPhone } = useStore()
 
     return (
         <View flex={1} style={{ paddingHorizontal: 20 }}>
@@ -49,7 +49,7 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     }} onPress={() => {
                         setAuthType(LoginType.EMAIL)
                         setUserEmail('')
-
+                        navigation.navigate('GetStarted')
                     }} />
 
                 <View style={{ flex: .6 }} orientation="column" >
