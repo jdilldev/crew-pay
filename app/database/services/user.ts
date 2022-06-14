@@ -1,3 +1,4 @@
+import { useStore } from "../../GlobalUserSettingsContext";
 import RealmContext from "../index";
 
 const { useRealm } = RealmContext;

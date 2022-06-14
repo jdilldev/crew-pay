@@ -1,4 +1,5 @@
 import { Realm } from "@realm/react";
+import Group from "./Group";
 
 export default class User extends Realm.Object {
 	_id!: string;
@@ -14,6 +15,7 @@ export default class User extends Realm.Object {
 	_verificationType?: "ssn" | "passport" | undefined;
 	_isActive?: boolean;
 	_createdAt?: Date;
+	groups?: Group;
 
 	static generate(
 		_id: string,

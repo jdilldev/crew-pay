@@ -24,16 +24,15 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
     const requestPasscode = authType === LoginType.PHONE ? isValidPhoneNumber(userPhone, countryCode) : isValidEmail(userEmail)
     const { data, refetch, isSuccess, } = authType === LoginType.PHONE ? useStytchSMS(userPhone, false) : useStytchEmail(userEmail, false)
     const [error, setError] = useState('')
-    /*     realm.write(() => {
+
+    useEffect(() => useStore.setState({ realm: realm }), [])
+    /* 
+        realm.write(() => {
             realm.delete(realm.objects("User"));
         });
-        addUser({ _id: '1', nationality: 'UK', phone: '447974653565' })
-    
-        addUser({ _id: '2', nationality: 'AU', email: 'j@b.com' })
-        addUser({ _id: '3', nationality: 'US', })
-    
-    
      */
+
+
     // addUser({ _id: 'pour', nationality: 'UK' })
 
     /*     const t = useObject<User>('User', '3')
@@ -46,13 +45,31 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
     //  console.log(realm.objects('User'))
 
     // console.log(useObject('User', '3'))
+
     useEffect(() => {
         if (isSuccess) {
             const { error_message, error_type } = data
             if (error_message) {
                 setError(error_message)
             } else {
-                const { phone_id, email_id } = data
+                const { phone_id, email_id, user_id, status_code } = data
+                const user = realm.objectForPrimaryKey("User", user_id); // search for a realm object with a primary key that is an int.
+
+                if (!user) //if the user does not exist in the DB, create one, otherwise, prompt for passcode
+                    try {
+                        realm.write(() => {
+                            realm.create("User",
+                                {
+                                    _id: user_id,
+                                    nationality: countryCode,
+                                    phone: userPhone || undefined,
+                                    email: userEmail || undefined
+                                });
+                        });
+                    } catch (err) {
+                        console.log("Error creating User: " + err);
+                    }
+
                 navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
             }
         }

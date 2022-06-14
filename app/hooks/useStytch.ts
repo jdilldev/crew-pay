@@ -10,15 +10,18 @@ const otpSMS = (phone: string) => {
 		endpoint,
 		gql`
 			query ($phoneNumber: String) {
-				... on LoginOrCreateResponse {
-					status_code
-					phone_id
-					user_id
-				}
-				... on StytchError {
-					status_code
-					error_type
-					error_message
+				loginOrCreateSMS(phoneNumber: $phoneNumber) {
+					... on LoginOrCreateResponse {
+						status_code
+						phone_id
+						email_id
+						user_id
+					}
+					... on StytchError {
+						status_code
+						error_type
+						error_message
+					}
 				}
 			}
 		`,
@@ -103,7 +106,10 @@ export const useAuthOTP = (
 	return useQuery(
 		"authenticateOTP",
 		async () => {
-			const { authenticateOTP } = await authOTP(methodId, passcode);
+			const { authenticateOTP } = await authOTP(
+				"phone-number-test-98cfbe19-6c8f-4b8b-b62a-e78a5a7bdff3",
+				"000000"
+			);
 
 			return authenticateOTP;
 		},

@@ -47,11 +47,6 @@ const Dashboard = () => {
                     tabBarIcon: () => <Icon pack='material' icon='attach-money' />
                 }}
             />
-            <Tab.Screen name="Spend" component={HomeScreen}
-                options={{
-                    tabBarIcon: () => <Icon pack='ion' icon='card-outline' />
-                }}
-            />
             <Tab.Screen name="Groups" component={SettingsScreen}
                 options={{
                     tabBarIcon: () => <Icon pack='simple' icon='people' />

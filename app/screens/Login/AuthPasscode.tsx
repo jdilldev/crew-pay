@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, Button } from '../../styles/styles'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { View, Text, } from '../../styles/styles'
 import OTP from '../../assets/svgs/OTP-phone.svg'
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import { KeyboardAvoidingView, Platform, TextInput } from 'react-native'
 import { LoginType, RootStackScreenProps } from '../../types'
 import parsePhoneNumber from 'libphonenumber-js'
-import { AuthenticateResponse } from 'stytch/types/lib/otps'
 import { useStore } from '../../GlobalUserSettingsContext'
 import { useAuthOTP } from '../../hooks/useStytch'
 
 const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'>) => {
     const { methodID } = route.params
     const [passcodeArray, setPasscode] = useState<string[]>([])
-    const { countryCode, authType, userPhone, userEmail } = useStore()
+    const { realm, countryCode, authType, userPhone, userEmail } = useStore()
     const { data, refetch, isSuccess, } = useAuthOTP(methodID, passcodeArray.join(''), !(passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6))
     const [error, setError] = useState('')
+
+    console.log(realm.objects('User'))
 
     useEffect(() => {
         if (data) {
@@ -59,9 +59,6 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
                         keyboardType='numeric'
                         value={passcodeArray[idx]}
                         onKeyPress={({ nativeEvent }) => {
-                            //check if key pressed is back space
-                            //check array passcode is valid
-                            //refetch
                             const tmpArr = [...passcodeArray]
                             tmpArr[idx] = (!isNaN(+nativeEvent.key)) ? nativeEvent.key : ''
                             setPasscode(tmpArr)

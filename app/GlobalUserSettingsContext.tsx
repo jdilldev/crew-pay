@@ -15,7 +15,7 @@ interface GlobalUserSettingsContext {
     setAuthType: (val: LoginType) => void,
     language?: string,
     setLanguage?: (val: string) => void
-
+    realm: Realm
 }
 
 export const useStore = create<GlobalUserSettingsContext>(set => ({
@@ -32,4 +32,5 @@ export const useStore = create<GlobalUserSettingsContext>(set => ({
     setAuthType: (authType: LoginType) => set({ authType }),
     setLanguage: (language: string) => set({ language }),
     deleteEverything: () => set({}, true), // clears the entire store, actions included
+    realm: {} as Realm
 }))

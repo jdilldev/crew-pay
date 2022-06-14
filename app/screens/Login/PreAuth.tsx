@@ -36,7 +36,7 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     onPress={() => {
                         setAuthType(LoginType.PHONE)
                         setUserPhone('')
-                        navigation.navigate('GetStarted')
+                        navigation.navigate('Dashboard') //GetStarted
                     }} />
                 <Button
                     type='primary'
@@ -49,7 +49,7 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     }} onPress={() => {
                         setAuthType(LoginType.EMAIL)
                         setUserEmail('')
-                        navigation.navigate('GetStarted')
+                        navigation.navigate('Dashboard') //GetStarteds
                     }} />
 
                 <View style={{ flex: .6 }} orientation="column" >

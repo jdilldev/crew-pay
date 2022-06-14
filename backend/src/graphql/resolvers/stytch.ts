@@ -28,12 +28,17 @@ export const resolvers = {
 			_: undefined,
 			{ phoneNumber }: LoginOrCreateArgs
 		) => {
-			const { phone_id, user_id, status_code } =
-				await stytch_client.otps.sms.loginOrCreate({
-					phone_number: phoneNumber,
-				});
+			try {
+				const { phone_id, user_id, status_code } =
+					await stytch_client.otps.sms.loginOrCreate({
+						phone_number: phoneNumber,
+					});
 
-			return { phone_id, user_id, status_code };
+				return { phone_id, user_id, status_code };
+			} catch (err) {
+				const { error_message, error_type, status_code } = err as StytchError;
+				return { error_message, error_type, status_code };
+			}
 		},
 		loginOrCreateEmail: async (_: undefined, { email }: LoginOrCreateArgs) => {
 			try {
