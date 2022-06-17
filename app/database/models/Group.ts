@@ -4,11 +4,12 @@ export default class Group extends Realm.Object {
 		name: "Group",
 		primaryKey: "_id",
 		properties: {
-			_id: "objectId",
+			_id: "string",
 			name: "string",
+			card: "Card?",
+			members: "string[]",
 			description: "string",
-			isComplete: { type: "bool", default: false },
-			// createdAt: "date",
+			createdAt: "date",
 		},
 	};
 }

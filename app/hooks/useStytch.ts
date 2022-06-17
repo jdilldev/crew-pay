@@ -5,6 +5,14 @@ import { useStore } from "../GlobalUserSettingsContext";
 import { StytchError } from "stytch";
 
 const endpoint = "http://localhost:3000/dev/graphql";
+const ERROR_FIELDS = gql`
+	fragment ErrorFields on StytchError {
+		status_code
+		error_type
+		error_message
+	}
+`;
+
 const otpSMS = (phone: string) => {
 	return request(
 		endpoint,
@@ -106,10 +114,7 @@ export const useAuthOTP = (
 	return useQuery(
 		"authenticateOTP",
 		async () => {
-			const { authenticateOTP } = await authOTP(
-				"phone-number-test-98cfbe19-6c8f-4b8b-b62a-e78a5a7bdff3",
-				"000000"
-			);
+			const { authenticateOTP } = await authOTP(methodId, passcode);
 
 			return authenticateOTP;
 		},

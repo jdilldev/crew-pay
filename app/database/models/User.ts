@@ -13,9 +13,10 @@ export default class User extends Realm.Object {
 	_nationality!: string;
 	_uniqueVerificationNumber?: string | undefined;
 	_verificationType?: "ssn" | "passport" | undefined;
+	photo?: ArrayBuffer;
 	_isActive?: boolean;
 	_createdAt?: Date;
-	groups?: Group;
+	groups?: string[];
 
 	static generate(
 		_id: string,
@@ -37,7 +38,6 @@ export default class User extends Realm.Object {
 		primaryKey: "_id",
 		properties: {
 			_id: "string",
-			//_partition: "string",
 			first_name: { type: "string?", mapTo: "firstName" },
 			middle_name: { type: "string?", mapTo: "middleName" },
 			last_name: { type: "string?", mapTo: "lastName" },
@@ -51,8 +51,10 @@ export default class User extends Realm.Object {
 				mapTo: "uniqueVerificationNumber",
 			},
 			verification_type: { type: "string?", mapTo: "verificationType" },
+			photo: "data?",
 			isActive: { type: "bool", default: false },
 			createdAt: { type: "date", default: new Date() },
+			groups: "string[]", //"Group{}"
 		},
 	};
 

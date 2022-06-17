@@ -1,3 +1,5 @@
+// import at the very top of everything.
+import './ignoreWarnings';
 import { StatusBar } from 'expo-status-bar';
 import { CountryCallingCode, CountryCode } from 'libphonenumber-js';
 import React, { useState } from 'react';
@@ -7,7 +9,11 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { LoginType } from './types';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import RealmContext from './database'
+import RealmContext, { APP_ID, User } from './database'
+import { AppProvider, UserProvider } from '@realm/react'
+import { Text, View } from './styles/styles';
+import { PreAuth } from './screens/Login';
+import Dashboard from './screens/Dashboard';
 
 //get RealmProvider from RealmContext created
 const { RealmProvider, useRealm } = RealmContext
@@ -16,10 +22,6 @@ const { RealmProvider, useRealm } = RealmContext
 // query client for react-query
 const queryClient = new QueryClient();
 
-/* const syncConfig = {
-  user: app?.currentUser,
-  partitionValue: 'ExpoTemplate',
-}; */
 
 
 const App = () => {
@@ -31,14 +33,31 @@ const App = () => {
   if (!isLoadingComplete) {
     return null;
   }
-  return <RealmProvider /* sync={syncConfig} fallback={() => <LoadingSpinner />} */>
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </SafeAreaProvider>
-    </QueryClientProvider>
-  </RealmProvider>
+
+
+
+  return <QueryClientProvider client={queryClient}>
+    <AppProvider id={APP_ID}>
+      <UserProvider fallback={
+        <SafeAreaProvider>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </SafeAreaProvider>
+      }>
+        <RealmProvider sync={{
+          flexible: true,
+          initialSubscriptions: {
+            update: (subs, realm) => {
+              subs.add(realm.objects('User'));
+            },
+            rerunOnOpen: true,
+          }
+        }}>
+          <Dashboard />
+        </RealmProvider>
+      </UserProvider>
+    </AppProvider>
+  </QueryClientProvider>
 }
 
 export default App;

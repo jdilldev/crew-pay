@@ -31,7 +31,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/real/birds-eye-food.jpg",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jdilldev.crewpay"
     },
     "web": {
       "favicon": "./assets/images/real/birds-eye-food.jpg"

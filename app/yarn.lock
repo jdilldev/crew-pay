@@ -1753,18 +1753,19 @@
   dependencies:
     nanoid "^3.1.23"
 
-"@realm.io/common@^0.1.1":
+"@realm.io/common@^0.1.1", "@realm.io/common@^0.1.2":
   version "0.1.2"
   resolved "https://registry.npmjs.org/@realm.io/common/-/common-0.1.2.tgz"
   integrity sha512-SqrapTgmu0H/Wz5gmBgzWh6VwYav0zp0QSA2I1qTeBFiimFdSVXrxCeTz8bMgVMk6Cmb1qrBkju3M0yReey0uw==
 
-"@realm/react@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@realm/react/-/react-0.1.0.tgz"
-  integrity sha512-YEgQK1Ie5Mm275i+3rFkDPamDayxSNm4EhGM0d0i53mFceRsxsPzBAnBGL7pEJ6AHAvUlIBdjRjJT15tSJB7cQ==
+"@realm/react@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@realm/react/-/react-0.3.1.tgz#b9a9c3d4b72bd0a3791ac65302e9a44d9ad90bef"
+  integrity sha512-AroUYSysqDWdquxo/AmBb7f1Nnd34HVreMJjYL0N+OAf8VLEdNnmAfnKEr54u/E78qANuL1+1vYAxi2yyRcHDA==
   dependencies:
+    "@realm.io/common" "^0.1.2"
     lodash "^4.17.21"
-    realm "*"
+    realm ">=10.17.0"
   optionalDependencies:
     "@babel/runtime" ">=7"
     react-native ">=0.59"
@@ -6588,7 +6589,7 @@ realm-network-transport@^0.7.2:
     abort-controller "^3.0.0"
     node-fetch "^2.6.0"
 
-realm@*, realm@^10.11.0:
+realm@>=10.17.0, realm@^10.11.0:
   version "10.19.1"
   resolved "https://registry.npmjs.org/realm/-/realm-10.19.1.tgz"
   integrity sha512-L6prvxytfIa9IAEaraQHCjsPTtp6W4UvEDNqUroy4RUW+Kk/JR/nOWpXyfGYVk5POPs7CoU1wXiaGaR2Kyy1xg==

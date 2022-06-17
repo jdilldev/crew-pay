@@ -7,33 +7,45 @@ import { LoginType, RootStackScreenProps } from '../../types'
 import parsePhoneNumber from 'libphonenumber-js'
 import { useStore } from '../../GlobalUserSettingsContext'
 import { useAuthOTP } from '../../hooks/useStytch'
+import { useApp } from '@realm/react'
 
 const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'>) => {
     const { methodID } = route.params
-    const [passcodeArray, setPasscode] = useState<string[]>([])
-    const { realm, countryCode, authType, userPhone, userEmail } = useStore()
-    const { data, refetch, isSuccess, } = useAuthOTP(methodID, passcodeArray.join(''), !(passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6))
+    const [code, setCode] = useState('')
+    const [passcode, setPasscode] = useState<string[]>([])
+    const { countryCode, authType, userPhone, userEmail } = useStore()
+    const { data, refetch, isSuccess, } = useAuthOTP(methodID, code, !(passcode.length !== 6))
     const [error, setError] = useState('')
 
-    console.log(realm.objects('User'))
-
+    //console.log(realm.objects('User'))
+    const app = useApp();
     useEffect(() => {
-        if (data) {
-            const { status_code } = data
-            if (status_code === 200)
-                navigation.navigate('Dashboard')
-            else {
-                const { error_message } = data
-                setError(error_message)
+        (async () => {
+            if (data) {
+                const { status_code } = data
+                if (status_code === 200) {
+                    const credentials = Realm.Credentials.anonymous()
+                    try {
+                        await app.logIn(credentials);
+
+                    } catch (error) {
+                        throw `Error logging in anonymously: ${JSON.stringify(error, null, 2)}`;
+                    }
+                }
+                //  navigation.navigate('Dashboard')
+                else {
+                    const { error_message } = data
+                    setError(error_message)
+                }
             }
-        }
+        })()
     }, [data])
 
     useEffect(() => {
-        if (!(passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6))
+        console.log('in effect ------- ' + code)
+        if (code.length === 6)
             refetch()
-    }, [passcodeArray])
-
+    }, [code])
 
     return <KeyboardAvoidingView
         style={{ display: 'flex', flex: 1, flexDirection: 'column', marginTop: 30 }}
@@ -52,21 +64,26 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
                 <Text>{authType === LoginType.PHONE ? parsePhoneNumber(userPhone, countryCode)?.formatInternational() : userEmail}</Text>
             </View>
             <View style={{ width: '90%', alignSelf: 'center' }} orientation='row' justify='space-between' spacing={true}>
+                <TextInput
+                    maxLength={6}
+                    keyboardType='numeric'
+                    autoComplete='sms-otp' //android 
+                    textContentType='oneTimeCode' //ios
+                    value={code}
+                    onChangeText={e => {
+                        setPasscode(e.split(''))
+                        setCode(e)
+                    }}
+                    style={{
+                        display: 'none',
+
+                    }} />
                 {Array(6).fill(-1).map((digit, idx) =>
                     <TextInput
-                        key={idx}
+                        key={`passcode-input-${idx}`}
                         maxLength={1}
                         keyboardType='numeric'
-                        value={passcodeArray[idx]}
-                        onKeyPress={({ nativeEvent }) => {
-                            const tmpArr = [...passcodeArray]
-                            tmpArr[idx] = (!isNaN(+nativeEvent.key)) ? nativeEvent.key : ''
-                            setPasscode(tmpArr)
-
-                            if (!(passcodeArray.some(entry => entry === '') || passcodeArray.length !== 6 || isNaN(+nativeEvent.key) || nativeEvent.key === 'Backspace')) {
-                                setPasscode(tmpArr)
-                            }
-                        }}
+                        value={code[idx]}
                         style={{
                             textAlign: 'center',
                             fontSize: 30,
@@ -75,9 +92,21 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
                             borderColor: 'black',
                             borderRadius: 5,
                             borderWidth: 1
-                        }} />
-                )}
+                        }}
+                        onChangeText={e => {
+                            if (!isNaN(+e)) {
+                                console.log(e)
+                                const tmpArr = [...passcode]
+                                tmpArr[idx] = (!isNaN(+e)) ? e : ''
+                                setPasscode(tmpArr)
 
+                                if (!(tmpArr.some(item => item === '') || tmpArr.length !== 6 || isNaN(+e))) {
+                                    setCode(tmpArr.join(''))
+                                }
+                            }
+                        }}
+                    />
+                )}
             </View>
             {
                 error ? <Text align='center' type='error'>{error}</Text> : null

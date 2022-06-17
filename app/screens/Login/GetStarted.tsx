@@ -16,16 +16,16 @@ import { Realm, createRealmContext } from "@realm/react";
 import { addUser } from "../../database/services/user";
 import { useStore } from '../../GlobalUserSettingsContext'
 
-const { useRealm, useQuery, useObject } = RealmContext
+//const { useRealm, useQuery, useObject } = RealmContext
 
 const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
-    const realm: Realm = useRealm();
+    /// const realm: Realm = useRealm();
     const { countryCode, authType, setAuthType, userPhone, userEmail } = useStore()
     const requestPasscode = authType === LoginType.PHONE ? isValidPhoneNumber(userPhone, countryCode) : isValidEmail(userEmail)
     const { data, refetch, isSuccess, } = authType === LoginType.PHONE ? useStytchSMS(userPhone, false) : useStytchEmail(userEmail, false)
     const [error, setError] = useState('')
 
-    useEffect(() => useStore.setState({ realm: realm }), [])
+    // useEffect(() => useStore.setState({ realm: realm }), [])
     /* 
         realm.write(() => {
             realm.delete(realm.objects("User"));
@@ -53,22 +53,8 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 setError(error_message)
             } else {
                 const { phone_id, email_id, user_id, status_code } = data
-                const user = realm.objectForPrimaryKey("User", user_id); // search for a realm object with a primary key that is an int.
-
-                if (!user) //if the user does not exist in the DB, create one, otherwise, prompt for passcode
-                    try {
-                        realm.write(() => {
-                            realm.create("User",
-                                {
-                                    _id: user_id,
-                                    nationality: countryCode,
-                                    phone: userPhone || undefined,
-                                    email: userEmail || undefined
-                                });
-                        });
-                    } catch (err) {
-                        console.log("Error creating User: " + err);
-                    }
+                //handle logic for registering user and auth when they verify passcode
+                //handle token and
 
                 navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
             }
