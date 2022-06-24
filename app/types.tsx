@@ -41,6 +41,12 @@ export const useThemeColor = (
 
 export enum LoginType { 'PHONE', 'EMAIL', 'GMAIL' }
 
+export type ApplicationInput = {
+  name: string;
+  dob: string;
+};
+
+
 export type IconTypes = IoniconTypes | MaterialIconTypes | SimpleIconTypes | ZocialIconTypes;
 export type IoniconTypes = keyof typeof Ionicons.glyphMap;
 export type MaterialIconTypes = keyof typeof MaterialIcons.glyphMap;
@@ -58,7 +64,7 @@ export type RootStackParamList = {
   NotFound: undefined;
   Login: undefined;
   GetStarted: undefined;
-  AuthPasscode: { methodID: string };
+  AuthPasscode: { methodID: string, userID: string };
   Dashboard: undefined;
 };
 

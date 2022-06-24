@@ -25,27 +25,6 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
     const { data, refetch, isSuccess, } = authType === LoginType.PHONE ? useStytchSMS(userPhone, false) : useStytchEmail(userEmail, false)
     const [error, setError] = useState('')
 
-    // useEffect(() => useStore.setState({ realm: realm }), [])
-    /* 
-        realm.write(() => {
-            realm.delete(realm.objects("User"));
-        });
-     */
-
-
-    // addUser({ _id: 'pour', nationality: 'UK' })
-
-    /*     const t = useObject<User>('User', '3')
-        if (t) {
-            realm.write(() => {
-                t.dob = 'january birthday'
-            })
-        } */
-
-    //  console.log(realm.objects('User'))
-
-    // console.log(useObject('User', '3'))
-
     useEffect(() => {
         if (isSuccess) {
             const { error_message, error_type } = data
@@ -56,7 +35,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 //handle logic for registering user and auth when they verify passcode
                 //handle token and
 
-                navigation.navigate('AuthPasscode', { methodID: phone_id || email_id })
+                navigation.navigate('AuthPasscode', { methodID: phone_id || email_id, userID: user_id })
             }
         }
     }, [isSuccess, data])

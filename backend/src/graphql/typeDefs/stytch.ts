@@ -24,6 +24,7 @@ export const typeDefs = gql`
 
 	type StatusCode {
 		status_code: Int
+		session_token: String
 	}
 
 	type StytchError {

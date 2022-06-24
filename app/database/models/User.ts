@@ -3,29 +3,33 @@ import Group from "./Group";
 
 export default class User extends Realm.Object {
 	_id!: string;
-	_firstName: string | undefined;
-	_middleName: string | undefined;
-	_lastName: string | undefined;
-	_dob: string | undefined;
-	_address: string | undefined;
-	_phone: string | undefined;
-	_email: string | undefined;
+	_stytchID!: string;
+	_firstName?: string;
+	_lastName?: string;
+	_dob?: string | undefined;
+	_address?: string | undefined;
+	_phone?: string | undefined;
+	_email?: string | undefined;
 	_nationality!: string;
 	_uniqueVerificationNumber?: string | undefined;
 	_verificationType?: "ssn" | "passport" | undefined;
 	photo?: ArrayBuffer;
 	_isActive?: boolean;
 	_createdAt?: Date;
+	_applicationID?: string;
+	_customerID?: string;
 	groups?: string[];
 
 	static generate(
 		_id: string,
+		stytchID: string,
 		nationality: string,
 		phone?: string,
 		email?: string
 	) {
 		return {
 			_id,
+			stytchID,
 			nationality,
 			phone,
 			email,
@@ -38,8 +42,10 @@ export default class User extends Realm.Object {
 		primaryKey: "_id",
 		properties: {
 			_id: "string",
+			stytchID: "string",
+			applicationID: "string?",
+			customerID: "string?",
 			first_name: { type: "string?", mapTo: "firstName" },
-			middle_name: { type: "string?", mapTo: "middleName" },
 			last_name: { type: "string?", mapTo: "lastName" },
 			dob: "string?",
 			address: "string?",
@@ -58,16 +64,28 @@ export default class User extends Realm.Object {
 		},
 	};
 
+	addGroup(groupID: string) {
+		this.groups = this.groups ? [...this.groups, groupID] : [groupID];
+	}
+
 	get id() {
 		return this._id;
 	}
 
-	set firstName(name: string) {
-		this._firstName = name;
+	set stytchID(stytchID: string) {
+		this.applicationID = stytchID;
 	}
 
-	set middleName(name: string) {
-		this._middleName = name;
+	set applicationID(applicationID: string) {
+		this.applicationID = applicationID;
+	}
+
+	set customerID(customerID: string) {
+		this.applicationID = customerID;
+	}
+
+	set firstName(name: string) {
+		this._firstName = name;
 	}
 
 	set lastName(name: string) {

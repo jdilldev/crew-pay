@@ -1,10 +1,9 @@
-import React, { createContext, useContext } from "react"
-import { Platform, Image, Pressable } from "react-native"
+import React from "react"
+import { Image, Pressable } from "react-native"
 import LottieView from 'lottie-react-native';
 import { View, Text, Button } from '../../styles/styles';
 import { LoginType, RootStackScreenProps } from "../../types";
 import { useStore } from '../../GlobalUserSettingsContext'
-
 
 const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
     const { setAuthType, setUserEmail, setUserPhone } = useStore()

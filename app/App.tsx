@@ -13,7 +13,7 @@ import RealmContext, { APP_ID, User } from './database'
 import { AppProvider, UserProvider } from '@realm/react'
 import { Text, View } from './styles/styles';
 import { PreAuth } from './screens/Login';
-import Dashboard from './screens/Dashboard';
+import Dashboard from './screens/Dashboard/Dashboard';
 
 //get RealmProvider from RealmContext created
 const { RealmProvider, useRealm } = RealmContext
@@ -44,15 +44,19 @@ const App = () => {
           <StatusBar />
         </SafeAreaProvider>
       }>
-        <RealmProvider sync={{
-          flexible: true,
-          initialSubscriptions: {
-            update: (subs, realm) => {
-              subs.add(realm.objects('User'));
-            },
-            rerunOnOpen: true,
-          }
-        }}>
+        <RealmProvider
+          deleteRealmIfMigrationNeeded={true}
+          sync={{
+            flexible: true,
+
+            initialSubscriptions: {
+              update: (subs, realm) => {
+                subs.add(realm.objects('User'));
+                subs.add(realm.objects('Group'))
+              },
+              rerunOnOpen: true,
+            }
+          }}>
           <Dashboard />
         </RealmProvider>
       </UserProvider>

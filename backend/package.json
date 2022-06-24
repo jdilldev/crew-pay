@@ -13,6 +13,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@unit-finance/unit-node-sdk": "^0.9.31",
     "apollo-server": "^3.8.2",
     "apollo-server-lambda": "^3.8.2",
     "aws-sdk": "^2.1152.0",

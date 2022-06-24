@@ -1,6 +1,7 @@
 import { CountryCallingCode, CountryCode } from 'libphonenumber-js';
 import create from 'zustand'
 import { LoginType } from './types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface GlobalUserSettingsContext {
     userPhone: string,
@@ -34,3 +35,22 @@ export const useStore = create<GlobalUserSettingsContext>(set => ({
     deleteEverything: () => set({}, true), // clears the entire store, actions included
     realm: {} as Realm
 }))
+
+export const storeDataAsyncStorage = async (key: string, value: any) => {
+    try {
+        typeof value === 'string' ? await AsyncStorage.setItem(key, value) : await AsyncStorage.setItem(key, JSON.stringify(value))
+    } catch (e) {
+        console.log('Error saving to async storage ' + e)
+    }
+}
+
+export const getDataAsyncStorage = async (key: string) => {
+    try {
+        const value = await AsyncStorage.getItem(key)
+        if (value !== null) {
+            return typeof value === 'string' ? value : JSON.parse(value)
+        }
+    } catch (e) {
+        console.log('Error getting value from async storage ' + e)
+    }
+}

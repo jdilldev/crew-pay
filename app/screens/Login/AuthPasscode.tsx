@@ -5,47 +5,42 @@ import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import { KeyboardAvoidingView, Platform, TextInput } from 'react-native'
 import { LoginType, RootStackScreenProps } from '../../types'
 import parsePhoneNumber from 'libphonenumber-js'
-import { useStore } from '../../GlobalUserSettingsContext'
+import { storeDataAsyncStorage, useStore } from '../../GlobalUserSettingsContext'
 import { useAuthOTP } from '../../hooks/useStytch'
 import { useApp } from '@realm/react'
+import axios from 'axios'
 
 const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'>) => {
-    const { methodID } = route.params
+    const { methodID, userID } = route.params
     const [code, setCode] = useState('')
     const [passcode, setPasscode] = useState<string[]>([])
     const { countryCode, authType, userPhone, userEmail } = useStore()
-    const { data, refetch, isSuccess, } = useAuthOTP(methodID, code, !(passcode.length !== 6))
+    //const { data, refetch, isSuccess, } = useAuthOTP(methodID, code, !(passcode.length !== 6))
     const [error, setError] = useState('')
 
-    //console.log(realm.objects('User'))
+
     const app = useApp();
-    useEffect(() => {
-        (async () => {
-            if (data) {
-                const { status_code } = data
-                if (status_code === 200) {
-                    const credentials = Realm.Credentials.anonymous()
-                    try {
-                        await app.logIn(credentials);
+    const authenticate = async (authenticationCode: string) => {
+        const credentials = Realm.Credentials.function({ method_id: methodID, code: authenticationCode, nationality: countryCode })
+        //   storeDataAsyncStorage('token', session_token) TODO handle session
+        try {
+            const user = await app.logIn(credentials)
+            const userCollection = user.mongoClient("mongodb-atlas").db("stackDB").collection("User");
+            const filter = {
+                _id: user.id, // Query for the user object of the logged in user
+            };
+            const updateDoc = {
+                $set: {
+                    nationality: countryCode,
+                },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc);
+            console.log(result);
+        } catch (error) {
+            throw `Error logging in with custom function calling Stytch API: ${error}`;
+        }
+    }
 
-                    } catch (error) {
-                        throw `Error logging in anonymously: ${JSON.stringify(error, null, 2)}`;
-                    }
-                }
-                //  navigation.navigate('Dashboard')
-                else {
-                    const { error_message } = data
-                    setError(error_message)
-                }
-            }
-        })()
-    }, [data])
-
-    useEffect(() => {
-        console.log('in effect ------- ' + code)
-        if (code.length === 6)
-            refetch()
-    }, [code])
 
     return <KeyboardAvoidingView
         style={{ display: 'flex', flex: 1, flexDirection: 'column', marginTop: 30 }}
@@ -95,13 +90,13 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
                         }}
                         onChangeText={e => {
                             if (!isNaN(+e)) {
-                                console.log(e)
                                 const tmpArr = [...passcode]
                                 tmpArr[idx] = (!isNaN(+e)) ? e : ''
                                 setPasscode(tmpArr)
 
                                 if (!(tmpArr.some(item => item === '') || tmpArr.length !== 6 || isNaN(+e))) {
                                     setCode(tmpArr.join(''))
+                                    authenticate(tmpArr.join(''))
                                 }
                             }
                         }}

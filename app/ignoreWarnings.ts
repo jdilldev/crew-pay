@@ -1,6 +1,9 @@
 import { LogBox } from "react-native";
 
-const ignoreWarns = ["ViewPropTypes will be removed"];
+const ignoreWarns = [
+	"ViewPropTypes will be removed",
+	"BSON: For React Native please polyfill crypto.getRandomValues",
+];
 const warn = console.warn;
 console.warn = (...arg) => {
 	for (let i = 0; i < ignoreWarns.length; i++) {

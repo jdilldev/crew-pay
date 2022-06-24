@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ColorSchemeName, Appearance } from 'react-native';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import { AuthPasscode, PreAuth, GetStarted } from '../screens/Login'
-import Dashboard from '../screens/Dashboard'
+import Dashboard from '../screens/Dashboard/Dashboard'
 
 import { RootStackParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';

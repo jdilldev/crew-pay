@@ -20,6 +20,7 @@ type LoginOrCreateArgs = {
 type AuthenticateArgs = {
 	methodId: string;
 	code: string;
+	sessionToken?: string;
 };
 
 export const resolvers = {
@@ -32,6 +33,7 @@ export const resolvers = {
 				const { phone_id, user_id, status_code } =
 					await stytch_client.otps.sms.loginOrCreate({
 						phone_number: phoneNumber,
+						create_user_as_pending: true,
 					});
 
 				return { phone_id, user_id, status_code };
@@ -45,7 +47,9 @@ export const resolvers = {
 				const { email_id, user_id, status_code } =
 					await stytch_client.otps.email.loginOrCreate({
 						email: email,
+						create_user_as_pending: true,
 					});
+
 				return { email_id, user_id, status_code };
 			} catch (err) {
 				const { error_message, error_type, status_code } = err as StytchError;
@@ -54,15 +58,23 @@ export const resolvers = {
 		},
 		authenticateOTP: async (
 			_: undefined,
-			{ methodId, code }: AuthenticateArgs
+			{ methodId, code, sessionToken }: AuthenticateArgs
 		) => {
 			try {
-				const { user, status_code } = await stytch_client.otps.authenticate({
-					method_id: methodId,
-					code: code,
-				});
+				const { status_code, session_token, session } = sessionToken
+					? await stytch_client.otps.authenticate({
+							method_id: methodId,
+							code: code,
+							session_duration_minutes: 43200,
+							session_token: sessionToken,
+					  })
+					: await stytch_client.otps.authenticate({
+							method_id: methodId,
+							code: code,
+							session_duration_minutes: 43200,
+					  });
 
-				return { status_code };
+				return { status_code, session_token }; //todo: add session
 			} catch (err) {
 				const { error_message, error_type, status_code } = err as StytchError;
 				return { error_message, error_type, status_code };

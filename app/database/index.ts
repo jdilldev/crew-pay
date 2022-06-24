@@ -1,4 +1,3 @@
-import "react-native-get-random-values";
 import { createRealmContext } from "@realm/react";
 import Group from "./models/Group";
 import User from "./models/User";
