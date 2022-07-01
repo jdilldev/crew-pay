@@ -3,65 +3,58 @@ import { useApp, useUser } from '@realm/react';
 import RealmContext, { Group, User } from '../../database'
 import { Button, Text, View } from '../../styles/styles';
 import { FlatList } from 'react-native';
+import { useAuthenticatedStore } from '../../GlobalUserSettingsContext';
 const { useRealm, useQuery, useObject } = RealmContext
+import WaitImage from '../../assets/svgs/frightened.svg'
 
 const GroupScreen = () => {
-    const app = useApp();
-    const user = useUser();
     const realm = useRealm()
-    const users = useQuery(User);
-    let person: any;
-    if (user?.id)
-        person = useObject(User, user.id)
+    const groups = useQuery(Group);
+    const { currentUserID } = useAuthenticatedStore()
+    const currentUser = currentUserID ? useObject(User, currentUserID) : null
 
-    const tasks = useQuery(Group);
-    console.log(tasks)
-
-
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Button text='Add Group' onPress={() => {
-                console.log('want to create a group')
-                try {
-                    realm.write(() => {
-                        if (user?.id) {
-                            const newGroup = realm.create<Group>("Group", Group.generate('name', 'breif desc', user.id));
-                            person.groups = [...person.groups, newGroup._id.toString()]
-                        }
-                    });
-                } catch (err) {
-                    console.log("Error creating Group: " + err);
-                }
-            }
-
-                /*    const user = realm.objectForPrimaryKey("User", user_id); // search for a realm object with a primary key that is an int.
-   
-                   if (!user) //if the user does not exist in the DB, create one, otherwise, prompt for passcode
-                       try {
-                           realm.write(() => {
-                               realm.create("User",
-                                   {
-                                       _id: user_id,
-                                       nationality: countryCode,
-                                       phone: userPhone || undefined,
-                                       email: userEmail || undefined
-                                   });
-                           });
-                       } catch (err) {
-                           console.log("Error creating User: " + err);
-                       }*/
-            } />
-            <View flex={1}>
+    if (currentUserID && currentUser) {
+        const GroupList = () => {
+            return <>
                 <FlatList
-                    data={tasks}
+                    data={groups}
                     keyExtractor={task => task._id.toString()}
                     renderItem={({ item }) => {
-                        return <Text>{item.name}</Text>
+                        return <View>
+                            <Text>{item.name}</Text>
+                            {/*     <Text>{item.description}</Text> */}
+                        </View>
                     }}
                 />
+
+                <Button text='Add Group' onPress={() => {
+                    try {
+                        realm.write(() => {
+
+                            const newGroup = realm.create<Group>("Group", Group.generate('name', 'breif desc', currentUserID));
+                            currentUser.addGroup(newGroup._id.toHexString())
+
+                        });
+                    } catch (err) {
+                        console.log("Error creating Group: " + err);
+                    }
+                }} />
+            </>
+        }
+
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <WaitImage
+                    style={{
+                        width: '100%',
+                        height: '50%'
+                    }} />
+                {currentUser.applicationID ? <GroupList /> : <Text fontWeight='200' textAlign='center' padding={10}>Uh oh! We need to to know a little bit about you before you can start grouping.</Text>}
             </View>
-        </View>
-    );
+        );
+    }
+    return <Text>User does not exist</Text>
+
 }
 
 export default GroupScreen;

@@ -3,7 +3,7 @@ import create from 'zustand'
 import { LoginType } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface GlobalUserSettingsContext {
+type GlobalUserSettingsContext = {
     userPhone: string,
     setUserPhone: (val: string) => void,
     userEmail: string,
@@ -16,7 +16,6 @@ interface GlobalUserSettingsContext {
     setAuthType: (val: LoginType) => void,
     language?: string,
     setLanguage?: (val: string) => void
-    realm: Realm
 }
 
 export const useStore = create<GlobalUserSettingsContext>(set => ({
@@ -33,7 +32,19 @@ export const useStore = create<GlobalUserSettingsContext>(set => ({
     setAuthType: (authType: LoginType) => set({ authType }),
     setLanguage: (language: string) => set({ language }),
     deleteEverything: () => set({}, true), // clears the entire store, actions included
-    realm: {} as Realm
+}))
+
+
+type LoggedInUser = {
+    currentUserID: string,
+    setCurrentUserID: (userID: string) => void
+
+}
+
+export const useAuthenticatedStore = create<LoggedInUser>(set => ({
+    currentUserID: '',
+    setCurrentUserID: (userID: string) => set({ currentUserID: userID }),
+
 }))
 
 export const storeDataAsyncStorage = async (key: string, value: any) => {

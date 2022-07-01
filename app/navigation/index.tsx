@@ -1,11 +1,10 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer, Theme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Appearance } from 'react-native';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import { AuthPasscode, PreAuth, GetStarted } from '../screens/Login'
 import Dashboard from '../screens/Dashboard/Dashboard'
-
 import { RootStackParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import Colors from '../constants/Colors';

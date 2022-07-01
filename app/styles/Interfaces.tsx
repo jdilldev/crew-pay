@@ -1,10 +1,9 @@
 import { ViewStyle } from "react-native"
-import { IconProps, IconTypes } from "../types"
+import { IconPacks, IconProps, IconTypes } from "../types"
 
 export interface TextThemeProps {
     type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti'
     size?: 'large' | 'medium' | 'small' | 'smallButton' | 'normalButton' | 'largeButton' | 'default'
-    thickness?: 'ultralight' | 'light' | 'normal' | 'bold' | 'thickkk'
     align?: 'center' | 'left' | 'right' | 'justify'
     spacing?: boolean,
     customColor?: string,
@@ -20,12 +19,15 @@ export interface ViewThemeProps {
     transparent?: boolean
 }
 
+
 export interface IconThemeProps {
     icon: IconTypes
-    pack: 'ion' | 'material' | 'simple' | 'zocial'
+    pack: IconPacks
     size?: 'large' | 'medium' | 'small'
     color?: string,
     style?: ViewStyle
+    pressable?: boolean,
+    onPress?: () => void
 }
 
 export interface ButtonThemeProps {

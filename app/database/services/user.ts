@@ -27,7 +27,6 @@ export const addUser = ({
 
 export const getUser = (_id: string) => {
 	const user = 'objectForPrimaryKey("User", _id)?.toJSON()';
-	console.log(user);
 
 	return user;
 };

@@ -9,4 +9,5 @@ export const APP_ID = "application-0-rardp";
 
 export default createRealmContext({
 	schema: [Group, User, Card, Transaction],
+	deleteRealmIfMigrationNeeded: true,
 });

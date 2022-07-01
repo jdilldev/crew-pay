@@ -2,24 +2,16 @@ import React, { useEffect, useState } from "react"
 import { Image, KeyboardAvoidingView, Platform } from "react-native"
 import { View, Text, Button, PhoneValidationInput, EmailValidationInput, isValidEmail, } from "../../styles/styles";
 import {
-    AsYouType,
     isValidPhoneNumber,
 } from 'libphonenumber-js'
 import Logo from '../../assets/svgs/receiving-message.svg'
-import { LoginType, RootStackScreenProps, ThemeProps } from "../../types";
+import { LoginType, RootStackScreenProps } from "../../types";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
-import axios from 'axios'
-import { SendOTPBySMSResponse, OTPEmailSendResponse } from "stytch/types/lib/otps";
 import { useStytchEmail, useStytchSMS } from "../../hooks/useStytch";
-import RealmContext, { User } from '../../database'
-import { Realm, createRealmContext } from "@realm/react";
-import { addUser } from "../../database/services/user";
 import { useStore } from '../../GlobalUserSettingsContext'
 
-//const { useRealm, useQuery, useObject } = RealmContext
 
 const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
-    /// const realm: Realm = useRealm();
     const { countryCode, authType, setAuthType, userPhone, userEmail } = useStore()
     const requestPasscode = authType === LoginType.PHONE ? isValidPhoneNumber(userPhone, countryCode) : isValidEmail(userEmail)
     const { data, refetch, isSuccess, } = authType === LoginType.PHONE ? useStytchSMS(userPhone, false) : useStytchEmail(userEmail, false)
@@ -46,44 +38,39 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <View
             flex={.6}
-            style={{
-                backgroundColor: 'cornflowerblue',
-                transform: [{ scale: 1.5 }, { translateY: 20 }]
-
-            }}>
+            backgroundColor='cornflowerblue'
+            transform={[{ scale: 1.5 }, { translateY: 20 }]}
+        >
             <Logo
                 style={{
                     width: DEVICE_WIDTH,
                     height: DEVICE_HEIGHT / 3.5
                 }} />
         </View>
-        <View flex={1} style={{ padding: 10 }}>
-            <Text size="medium" thickness="bold">Choose login method</Text>
-            <Text size='default' spacing={false}>We will send a one-time, 4-digit passcode to make sure it is really you.</Text>
+        <View flex={1} padding={10}>
+            <Text size="medium" fontWeight="bold">Choose login method</Text>
+            <Text fontWeight="300" size='default' spacing={false}>We will send a one-time, 4-digit passcode to make sure it is really you.</Text>
             {error ?
                 <Text type="error">{error}</Text> : null
             }
             <View
                 //justify="center"
                 spacing={true}
-                style={{
-                    alignSelf: 'center',
-                    borderWidth: 0,
-                    paddingHorizontal: 7,
-                    paddingVertical: 3,
-                    borderRadius: 0,
-                    borderColor: 'black',
-                    //                    backgroundColor: '#e0e0e07e',
-                    minHeight: 40,
-                }}>
+                alignSelf='center'
+                borderWidth={0}
+                paddingHorizontal={7}
+                paddingVertical={3}
+                borderRadius={0}
+                borderColor='black'
+                minHeight={40}
+            >
                 {authType === LoginType.EMAIL
                     ? <EmailValidationInput /> : <PhoneValidationInput />}
             </View>
             <View orientation="row" justify="center">
                 <Text
-                    align="center"
+                    textAlign="center"
                     size="default"
-                    type="secondary"
                     onPress={() => {
                         authType === LoginType.EMAIL ? setAuthType(LoginType.PHONE) : setAuthType(LoginType.EMAIL)
 
@@ -91,11 +78,11 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                     Use {authType === LoginType.EMAIL ? 'phone' : 'email'}
                 </Text>
                 <View orientation="row" align="center">
-                    <Text style={{ marginLeft: 20, }}> Use Gmail</Text>
-                    <Image style={{ width: 20, height: 20, }} source={require('../../assets/images/vector/gmail-logo.jpg')} />
+                    <Image style={{ width: 20, height: 20, marginLeft: 40 }} source={require('../../assets/images/vector/google.png')} />
+                    <Text marginLeft={2}> Use Gmail</Text>
                 </View>
             </View>
-            <Text size="small" align="center" style={{ paddingHorizontal: 5 }}>By continuing, you may receive an SMS for verification. Message and data rates may apply. Must be in participating country.</Text>
+            <Text size="small" textAlign="center" paddingHorizontal={5}>By continuing, you may receive an SMS for verification. Message and data rates may apply. Must be in participating country.</Text>
             <Button
                 style={{ alignSelf: 'center' }}
                 type='primary'

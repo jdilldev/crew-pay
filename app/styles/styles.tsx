@@ -5,11 +5,13 @@ import {
   Pressable,
   TextInput,
   Text as DefaultText,
+  Button as DefaultButton,
   FlexAlignType,
   Dimensions,
   Image,
   Modal,
   FlatList,
+  TextStyle,
 } from 'react-native';
 import {
   parsePhoneNumber,
@@ -26,11 +28,12 @@ import { TextProps, ViewProps, useThemeColor, IconProps, IconTypes, IoniconTypes
 import { Ionicons, MaterialIcons, SimpleLineIcons, Zocial } from '@expo/vector-icons';
 import { COUNTRY_DATA } from '../constants/Constants';
 import { useStore } from '../GlobalUserSettingsContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const FontSize = {
   'small': 12,
   'medium': 24,
-  'large': 42,
+  'large': 30,
   'default': 17,
   'smallButton': 15,
   'normalButton': 23,
@@ -48,13 +51,11 @@ const TextWeight = {
 const DEVICE_WIDTH = Dimensions.get('window').width - 60;
 
 
-export function Text(props: TextProps,) {
+export function Text(props: TextProps) {
   const {
     spacing = true,
     type = 'default',
-    align,
     customColor,
-    thickness = 'normal',
     size = 'default',
     lightColor,
     darkColor,
@@ -62,16 +63,17 @@ export function Text(props: TextProps,) {
     ...otherProps } = props;
   const color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
   const fontSize = FontSize[size]
-  const fontWeight = TextWeight[thickness];
-
-  return <DefaultText style={[{
-    color,
-    fontSize,
-    fontWeight,
-    marginTop: spacing ? 5 : 0,
-    marginBottom: spacing ? 5 : 0,
-    textAlign: align
-  }, style]} {...otherProps} />;
+  const { children, onPress, ...styleProps } = otherProps
+  return <DefaultText
+    style={[{
+      color,
+      fontSize,
+      marginTop: spacing ? 5 : 0,
+      marginBottom: spacing ? 5 : 0,
+      ...styleProps
+    },]}
+    onPress={onPress}
+    {...props} />;
 }
 
 
@@ -105,7 +107,7 @@ export function View(props: ViewProps) {
     }, style]} {...otherProps} />;
 }
 
-export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor, ...otherProps }: IconProps) => {
+export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor, onPress, ...otherProps }: IconProps) => {
   let Icon = null;
   let iconColor = color ? color : useThemeColor({ light: lightColor, dark: darkColor }, 'default')
 
@@ -124,7 +126,7 @@ export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor
       break;
   }
 
-  return Icon;
+  return onPress ? <Pressable onPress={onPress}>{Icon}</Pressable> : Icon;
 }
 
 
@@ -178,8 +180,7 @@ export const Button = ({
       }, style]} >
       {icon && <Icon icon={icon.icon} pack={icon.pack} color={buttonTextColor} style={{ marginHorizontal: 15 }} />}
       <Text
-        thickness='bold'
-        align='center'
+        fontWeight='bold'
         type={type}
         customColor={buttonTextColor}
         size={size}>{text}
@@ -189,10 +190,10 @@ export const Button = ({
 }
 
 export const ButtonGroup = ({ buttons, otherProps }: { buttons: string[], otherProps?: ButtonProps }) => {
-
-  return <View orientation='row' >
-    {buttons.map(buttonText =>
-      <Button shape='square'  {...otherProps} onPress={() => { }} text={buttonText}></Button>
+  const [selected, setSelected] = useState(0)
+  return <View orientation='row' justify='center' borderColor={'teal'} borderWidth={1} width={DEVICE_WIDTH}>
+    {buttons.map((buttonText, index) =>
+      <Button type='primary' key={buttonText} outlined={selected !== index} size='smallButton' shape={'square'} style={{ width: (DEVICE_WIDTH) / (buttons.length), borderColor: 'transparent', marginHorizontal: -1 }} onPress={() => { setSelected(index) }} text={buttonText} {...otherProps}></Button>
     )}
   </View >
 }
@@ -351,7 +352,7 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
     animationType="slide"
     transparent={true}
     visible={visible}>
-    <View style={{
+    <SafeAreaView style={{
       flex: 1.5,
       justifyContent: 'center',
       alignItems: "center",
@@ -409,7 +410,7 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
           }}
           keyExtractor={item => item.id} />
       </View>
-    </View>
+    </SafeAreaView>
   </Modal >
 }
 

@@ -6,9 +6,11 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   View as DefaultView,
   Text as DefaultText,
+  TextProps as DefaultTextProps,
   Button as DefaultButton,
   ViewStyle,
-  PressableProps
+  PressableProps,
+  TextStyle
 } from 'react-native'
 import Colors from './constants/Colors';
 import useColorScheme from './hooks/useColorScheme';
@@ -48,14 +50,16 @@ export type ApplicationInput = {
 
 
 export type IconTypes = IoniconTypes | MaterialIconTypes | SimpleIconTypes | ZocialIconTypes;
+
+export type IconPacks = 'ion' | 'material' | 'simple' | 'zocial'
 export type IoniconTypes = keyof typeof Ionicons.glyphMap;
 export type MaterialIconTypes = keyof typeof MaterialIcons.glyphMap;
 export type SimpleIconTypes = keyof typeof SimpleLineIcons.glyphMap;
 export type ZocialIconTypes = keyof typeof Zocial.glyphMap;
 
 export type IconProps = ThemeProps & ViewStyle & IconThemeProps;
-export type TextProps = ThemeProps & DefaultText['props'] & TextThemeProps;
-export type ViewProps = ThemeProps & DefaultView['props'] & ViewThemeProps;
+export type TextProps = ThemeProps & DefaultText['props'] & TextStyle & TextThemeProps;
+export type ViewProps = ThemeProps & DefaultView['props'] & ViewStyle & ViewThemeProps;
 export type ButtonProps = ThemeProps & PressableProps & ButtonThemeProps;
 
 export type RootStackParamList = {

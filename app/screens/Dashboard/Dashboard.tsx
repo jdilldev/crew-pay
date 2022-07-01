@@ -1,59 +1,84 @@
 import React, { useEffect } from 'react'
-import { View, Text, Icon, Button } from '../../styles/styles'
-import Logo from '../../assets/svgs/OTP-phone.svg'
-import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
+import { Button, Icon, } from '../../styles/styles'
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useApp, useUser } from '@realm/react';
-import RealmContext, { Group, User } from '../../database'
-const { useRealm, useQuery, useObject } = RealmContext
+import RealmContext from '../../database'
 import GroupScreen from './GroupScreen';
 import FundsScreen from './FundsScreen';
 import ActivityScreen from './ActivityScreen';
-import ProfileDetails from './ProfileDetails';
-
-
+import ProfileDetails from './Profile/ProfileDetails';
+import { Image, Pressable } from 'react-native';
+import { useUser } from '@realm/react';
+import { useAuthenticatedStore } from '../../GlobalUserSettingsContext';
 const Tab = createBottomTabNavigator();
 const DashboardStack = createNativeStackNavigator();
-
+import AddGroupIcon from '../../assets/svgs/users.svg'
+import PiggyBankIcon from '../../assets/svgs/wallet-cash.svg'
+import MegaphoneIcon from '../../assets/svgs/megaphone.svg'
+import UserProfileIcon from '../../assets/svgs/abstract-octopus.svg'
+import LogoutIcon from '../../assets/svgs/logout.svg'
 
 
 const Dashboard = () => {
-    const realm = useRealm()
+    const { setCurrentUserID } = useAuthenticatedStore()
     const user = useUser()
-    const users = useQuery(User);
+
+    useEffect(() => {
+        if (user)
+            setCurrentUserID(user.id)
+    }, [user])
 
     return (
-        <NavigationContainer>
+        <NavigationContainer >
             <Tab.Navigator
                 id='dashboard-navigator'
                 backBehavior='history'
                 initialRouteName='Activity'
                 screenOptions={({ route }) => ({
-                    tabBarActiveTintColor: 'tomato',
+                    /*    headerStyle: {
+                           backgroundColor: '#f4511e',
+                       },
+                       headerTintColor: '#fff',
+                       headerTitleStyle: {
+                           fontWeight: 'bold',
+                       }, */
+                    tabBarIcon: ({ size, color }) => {
+                        switch (route.name) {
+                            case 'Activity':
+                                return <MegaphoneIcon fill={color} width={40} height={40} />
+                            case 'Funds':
+                                return <PiggyBankIcon fill={color} width={40} height={40} />
+                            case 'Groups':
+                                return <AddGroupIcon fill={color} width={40} height={40} />
+                            case 'Profile':
+                                return <UserProfileIcon fill={color} width={40} height={40} />
+                        }
+                    },
+                    tabBarStyle: {
+                        height: 90,
+                    },
+                    tabBarLabelStyle: { fontSize: 12 },
+                    headerRight: () => (
+                        <Pressable
+                            style={{ padding: 10 }}
+                            onPress={() => user?.logOut()}
+                        >
+                            <LogoutIcon fill={'black'} width={30} height={30} />
+                        </Pressable>
+                    ),
+                    tabBarActiveTintColor: 'teal',
                     tabBarInactiveTintColor: 'gray',
                 })}>
                 <Tab.Screen name="Activity"
                     component={ActivityScreen}
                     options={{
                         tabBarBadge: undefined,
-                        tabBarIcon: () => <Icon pack='ion' icon='list-circle-outline' />
+                        tabBarBadgeStyle: { backgroundColor: 'teal', fontWeight: 'bold' },
                     }} />
-                <Tab.Screen name="Funds" component={FundsScreen}
-                    options={{
-                        tabBarIcon: () => <Icon pack='material' icon='attach-money' />
-                    }}
-                />
-                <Tab.Screen name="Groups" component={GroupScreen}
-                    options={{
-                        tabBarIcon: () => <Icon pack='simple' icon='people' />
-                    }}
-                />
+                <Tab.Screen name="Funds" component={FundsScreen} />
+                <Tab.Screen name="Groups" component={GroupScreen} />
                 <Tab.Screen name="Profile" component={ProfileDetails}
-                    options={{
-                        tabBarIcon: () => <Icon pack='simple' icon='settings' />
-                    }}
                 />
             </Tab.Navigator>
         </NavigationContainer>

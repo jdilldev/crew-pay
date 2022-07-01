@@ -51,8 +51,8 @@ const App = () => {
 
             initialSubscriptions: {
               update: (subs, realm) => {
-                subs.add(realm.objects('User'));
-                subs.add(realm.objects('Group'))
+                subs.add(realm.objects('User'), { name: 'userData' });
+                subs.add(realm.objects('Group'), { name: 'userGroups' })
               },
               rerunOnOpen: true,
             }

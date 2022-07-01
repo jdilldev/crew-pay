@@ -27,6 +27,9 @@ export default class Group extends Realm.Object {
 			name: "string",
 			card: "Card?",
 			members: "string[]",
+			//	currentcy: "string",
+			//	balance:"\"
+			//available:""
 			description: "string",
 			createdAt: "date",
 		},
