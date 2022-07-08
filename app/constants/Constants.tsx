@@ -1,5 +1,5 @@
+import React from "react";
 import { Dimensions } from "react-native";
-
 export const endpoint = "http://localhost:3002";
 
 export const COUNTRY_DATA = [

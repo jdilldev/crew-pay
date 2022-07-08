@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="58px" height="57px" viewBox="0 0 58 57" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>calendar-6</title>
+    <g id="380-Essential" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="calendar-6" fill="#000000" fill-rule="nonzero">
+            <path d="M42.899,4 C42.434,1.721 40.415,0 38,0 C37.447,0 37,0.447 37,1 C37,1.553 37.447,2 38,2 C39.654,2 41,3.346 41,5 C41,6.654 39.654,8 38,8 C37.447,8 37,8.447 37,9 C37,9.553 37.447,10 38,10 C40.414,10 42.434,8.279 42.899,6 L56,6 L56,15 L2,15 L2,6 L16,6 L19,6 C19.553,6 20,5.553 20,5 C20,4.447 19.553,4 19,4 L17.184,4 C17.598,2.838 18.698,2 20,2 C21.654,2 23,3.346 23,5 C23,6.654 21.654,8 20,8 C19.447,8 19,8.447 19,9 C19,9.553 19.447,10 20,10 C22.757,10 25,7.757 25,5 C25,2.243 22.757,0 20,0 C17.586,0 15.566,1.721 15.101,4 L0,4 L0,17 L0,57 L58,57 L58,17 L58,4 L42.899,4 Z M56,55 L2,55 L2,17 L56,17 L56,55 Z" id="Shape"></path>
+            <path d="M26,2 C27.654,2 29,3.346 29,5 C29,6.654 27.654,8 26,8 C25.447,8 25,8.447 25,9 C25,9.553 25.447,10 26,10 C28.757,10 31,7.757 31,5 C31,2.243 28.757,0 26,0 C25.447,0 25,0.447 25,1 C25,1.553 25.447,2 26,2 Z" id="Path"></path>
+            <path d="M32,2 C33.654,2 35,3.346 35,5 C35,6.654 33.654,8 32,8 C31.447,8 31,8.447 31,9 C31,9.553 31.447,10 32,10 C34.757,10 37,7.757 37,5 C37,2.243 34.757,0 32,0 C31.447,0 31,0.447 31,1 C31,1.553 31.447,2 32,2 Z" id="Path"></path>
+            <circle id="Oval" cx="22" cy="24" r="1"></circle>
+            <circle id="Oval" cx="29" cy="24" r="1"></circle>
+            <circle id="Oval" cx="36" cy="24" r="1"></circle>
+            <circle id="Oval" cx="43" cy="24" r="1"></circle>
+            <circle id="Oval" cx="50" cy="24" r="1"></circle>
+            <circle id="Oval" cx="8" cy="32" r="1"></circle>
+            <circle id="Oval" cx="15" cy="32" r="1"></circle>
+            <circle id="Oval" cx="22" cy="32" r="1"></circle>
+            <circle id="Oval" cx="29" cy="32" r="1"></circle>
+            <circle id="Oval" cx="36" cy="32" r="1"></circle>
+            <circle id="Oval" cx="43" cy="32" r="1"></circle>
+            <circle id="Oval" cx="50" cy="32" r="1"></circle>
+            <circle id="Oval" cx="8" cy="39" r="1"></circle>
+            <circle id="Oval" cx="15" cy="39" r="1"></circle>
+            <circle id="Oval" cx="22" cy="39" r="1"></circle>
+            <circle id="Oval" cx="29" cy="39" r="1"></circle>
+            <circle id="Oval" cx="36" cy="39" r="1"></circle>
+            <circle id="Oval" cx="43" cy="39" r="1"></circle>
+            <circle id="Oval" cx="50" cy="39" r="1"></circle>
+            <circle id="Oval" cx="8" cy="47" r="1"></circle>
+            <circle id="Oval" cx="15" cy="47" r="1"></circle>
+            <circle id="Oval" cx="22" cy="47" r="1"></circle>
+            <circle id="Oval" cx="29" cy="47" r="1"></circle>
+            <circle id="Oval" cx="36" cy="47" r="1"></circle>
+        </g>
+    </g>
+</svg>

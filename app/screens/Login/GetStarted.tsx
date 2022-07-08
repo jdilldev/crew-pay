@@ -4,7 +4,7 @@ import { View, Text, Button, PhoneValidationInput, EmailValidationInput, isValid
 import {
     isValidPhoneNumber,
 } from 'libphonenumber-js'
-import Logo from '../../assets/svgs/receiving-message.svg'
+import ReceivingMessageSVG from '../../assets/svgs/receiving-message.svg'
 import { LoginType, RootStackScreenProps } from "../../types";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import { useStytchEmail, useStytchSMS } from "../../hooks/useStytch";
@@ -41,7 +41,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
             backgroundColor='cornflowerblue'
             transform={[{ scale: 1.5 }, { translateY: 20 }]}
         >
-            <Logo
+            <ReceivingMessageSVG
                 style={{
                     width: DEVICE_WIDTH,
                     height: DEVICE_HEIGHT / 3.5
@@ -54,7 +54,6 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 <Text type="error">{error}</Text> : null
             }
             <View
-                //justify="center"
                 spacing={true}
                 alignSelf='center'
                 borderWidth={0}
@@ -86,9 +85,10 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
             <Button
                 style={{ alignSelf: 'center' }}
                 type='primary'
-                icon={{ icon: 'send', pack: 'material' }}
+                icon={{ name: 'send', pack: 'material' }}
                 disabled={!requestPasscode}
-                width="full" text="Get passcode"
+                fullWidth
+                text="Get passcode"
                 onPress={() => {
                     refetch()
                 }} />

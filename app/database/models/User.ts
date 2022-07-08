@@ -1,4 +1,5 @@
 import { Realm } from "@realm/react";
+import { CountryCode } from "libphonenumber-js";
 
 export default class User extends Realm.Object {
 	_id!: string;
@@ -9,7 +10,7 @@ export default class User extends Realm.Object {
 	address?: string | undefined;
 	phone?: string;
 	email?: string;
-	nationality!: string;
+	nationality!: CountryCode;
 	uniqueVerificationNumber?: string | undefined;
 	verificationType?: "ssn" | "passport" | undefined;
 	photo?: ArrayBuffer;

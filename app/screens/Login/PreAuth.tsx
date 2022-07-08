@@ -29,9 +29,9 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     type='primary'
                     shape='oval'
                     text='Continue with Phone'
-                    width='full'
+                    fullWidth
                     icon={{
-                        icon: 'phone-portrait-outline', pack: 'ion'
+                        name: 'phone-portrait-outline', pack: 'ion', size: 25,
                     }}
                     onPress={() => {
                         setAuthType(LoginType.PHONE)
@@ -43,24 +43,25 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     outlined
                     shape='oval'
                     text='Continue with Email'
-                    width='full'
+                    fullWidth
                     icon={{
-                        icon: 'email', pack: 'zocial'
+                        name: 'email', pack: 'zocial', size: 25
                     }} onPress={() => {
                         setAuthType(LoginType.EMAIL)
                         setUserEmail('')
                         navigation.navigate('GetStarted')
                     }} />
 
-                <View flex={.6} orientation="column" justifyContent='center' alignItems="center">
-                    <Pressable
-                        onPress={() => { setAuthType(LoginType.GMAIL) }}
-                    >
-                        <Text textAlign="center" spacing={false}>Or connect to Google account</Text>
-                        <Image
-                            style={{ alignSelf: 'center', width: 20, height: 20, marginRight: 5, marginTop: 5 }}
-                            source={require('../../assets/images/vector/google.png')} />
-                    </Pressable>
+
+                <View>
+                    <View orientation="row" width={'100%'} alignItems='center' justifyContent="center" spacing={true}>
+                        <View orientation="row" flex={.3} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
+                        <Text flex={1} numberOfLines={1} textAlign="center" spacing={false}>Or connect to Google account</Text>
+                        <View orientation="row" flex={.3} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
+                    </View>
+                    <Image
+                        style={{ alignSelf: 'center', width: 20, height: 20, marginRight: 5, }}
+                        source={require('../../assets/images/vector/google.png')} />
                 </View>
             </View>
         </View >

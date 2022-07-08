@@ -3,7 +3,7 @@ import {
   StyleSheet,
   View as DefaultView,
   Pressable,
-  TextInput,
+  TextInput as DefaultTextInput,
   Text as DefaultText,
   Button as DefaultButton,
   FlexAlignType,
@@ -23,12 +23,15 @@ import {
   isValidPhoneNumber,
   CountryCode,
 } from 'libphonenumber-js'
-import { ButtonProps, LoginType } from '../types';
-import { TextProps, ViewProps, useThemeColor, IconProps, IconTypes, IoniconTypes, MaterialIconTypes, ZocialIconTypes, SimpleIconTypes } from '../types';
+import { ButtonProps, LoginType, TextInputProps } from '../types';
+import { TextProps, ViewProps, useThemeColor, VectorProps, IconTypes, IoniconTypes, MaterialIconTypes, ZocialIconTypes, SimpleIconTypes } from '../types';
 import { Ionicons, MaterialIcons, SimpleLineIcons, Zocial } from '@expo/vector-icons';
 import { COUNTRY_DATA } from '../constants/Constants';
 import { useStore } from '../GlobalUserSettingsContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getSVG } from '../constants/SvgIcons';
+import validator from 'validator';
+import useColorScheme from '../hooks/useColorScheme';
 
 const FontSize = {
   'small': 12,
@@ -59,22 +62,38 @@ export function Text(props: TextProps) {
     size = 'default',
     lightColor,
     darkColor,
-    style,
-    ...otherProps } = props;
+    ...rest } = props;
   const color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
   const fontSize = FontSize[size]
-  const { children, onPress, ...styleProps } = otherProps
+
+  const { style, onPress, children, ...otherProps } = rest
   return <DefaultText
     style={[{
       color,
       fontSize,
       marginTop: spacing ? 5 : 0,
       marginBottom: spacing ? 5 : 0,
-      ...styleProps
-    },]}
+    }, style, otherProps]}
     onPress={onPress}
-    {...props} />;
+    children={children}
+  />;
 }
+
+export function TextInput(props: TextInputProps) {
+  const {
+    lightColor,
+    darkColor,
+    ...rest } = props;
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text')
+  const { style, ...otherProps } = rest
+  return <DefaultTextInput
+    placeholderTextColor={color}
+    style={[{
+      color,
+    }, style]}
+    {...otherProps} />;
+}
+
 
 
 export function View(props: ViewProps) {
@@ -107,24 +126,39 @@ export function View(props: ViewProps) {
     }, style]} {...otherProps} />;
 }
 
-export const Icon = ({ icon, pack, size = 'medium', color, lightColor, darkColor, onPress, ...otherProps }: IconProps) => {
+export const Vector = ({
+  width = 20,
+  height = 20,
+  size = 20,
+  name,
+  pack,
+  color = 'black',
+  lightColor,
+  darkColor,
+  onPress,
+  ...otherProps }: VectorProps) => {
   let Icon = null;
-  let iconColor = color ? color : useThemeColor({ light: lightColor, dark: darkColor }, 'default')
+  const iconColor = color ? color : useThemeColor({ light: lightColor, dark: darkColor }, 'default')
 
-  switch (pack) {
-    case 'ion':
-      Icon = <Ionicons name={icon as IoniconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
-      break;
-    case 'material':
-      Icon = <MaterialIcons name={icon as MaterialIconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
-      break;
-    case 'simple':
-      Icon = <SimpleLineIcons name={icon as SimpleIconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
-      break;
-    case 'zocial':
-      Icon = <Zocial name={icon as ZocialIconTypes} size={FontSize[size]} color={iconColor} {...otherProps} />
-      break;
+  if (name && pack) {
+    switch (pack) {
+      case 'ion':
+        Icon = <Ionicons name={name as IoniconTypes} color={iconColor} size={size} {...otherProps} />
+        break;
+      case 'material':
+        Icon = <MaterialIcons name={name as MaterialIconTypes} color={iconColor} size={size} {...otherProps} />
+        break;
+      case 'simple':
+        Icon = <SimpleLineIcons name={name as SimpleIconTypes} color={iconColor} size={size}{...otherProps} />
+        break;
+      case 'zocial':
+        Icon = <Zocial name={name as ZocialIconTypes} color={iconColor} size={size} {...otherProps} />
+        break;
+    }
+  } else {
+    Icon = getSVG(name, color, width, height)
   }
+
 
   return onPress ? <Pressable onPress={onPress}>{Icon}</Pressable> : Icon;
 }
@@ -134,6 +168,7 @@ export const Button = ({
   onPress,
   text,
   icon,
+  weight = 'bold',
   iconPosition = 'start',
   outlined,
   shape = 'rounded',
@@ -141,7 +176,7 @@ export const Button = ({
   capitalized,
   customColor,
   elevated,
-  width,
+  fullWidth,
   type = 'default',
   lightColor,
   darkColor,
@@ -150,8 +185,8 @@ export const Button = ({
 }: ButtonProps) => {
   const color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background')
-  let buttonTextColor = outlined ? color : backgroundColor
-  let buttonBackgroundColor = outlined ? backgroundColor : color;
+  const buttonTextColor = outlined ? color : backgroundColor
+  const buttonBackgroundColor = outlined ? backgroundColor : color;
 
   const Shape = {
     'rounded': 7,
@@ -168,7 +203,8 @@ export const Button = ({
       onPressOut={() => setPressing(false)}
       style={[{
         opacity: otherProps.disabled ? .4 : pressing ? .8 : 1,
-        width: width === 'medium' ? DEVICE_WIDTH / 2 : DEVICE_WIDTH,
+        paddingHorizontal: 30,
+        width: fullWidth ? '100%' : 'auto',
         display: 'flex',
         flexDirection: icon ? (iconPosition === 'start' ? 'row' : 'row-reverse') : 'column',
         justifyContent: 'center',
@@ -178,9 +214,10 @@ export const Button = ({
         borderWidth: 2,
         borderRadius: Shape[shape],
       }, style]} >
-      {icon && <Icon icon={icon.icon} pack={icon.pack} color={buttonTextColor} style={{ marginHorizontal: 15 }} />}
+      {icon && <Vector {...icon} color={buttonTextColor} />}
       <Text
-        fontWeight='bold'
+        marginLeft={3}
+        fontWeight={weight}
         type={type}
         customColor={buttonTextColor}
         size={size}>{text}
@@ -214,7 +251,7 @@ export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, 
       shadowRadius: 12,
       shadowOpacity: .5
     }}>
-      <Icon icon={icon} pack={pack} />
+      <Vector name={icon} pack={pack} />
     </View>
     <TextInput
       placeholder={placeholder}
@@ -231,6 +268,7 @@ export const PhoneValidationInput = () => {
   const [phoneInput, setPhoneInput] = useState('')
   const [countryPickerVisibility, setCountryPickerVisibility] = useState(false);
   const { countryCode, countryCallingCode, setUserPhone } = useStore()
+  const placeholderTextColor = useThemeColor({}, 'default')
 
   const phoneFormatter: AsYouType = new AsYouType(countryCode)
 
@@ -275,7 +313,8 @@ export const PhoneValidationInput = () => {
       <TextInput
         keyboardType={'phone-pad'}
         placeholder={'Enter phone number'}
-        style={{ paddingRight: 0, fontSize: 20, }}
+        placeholderTextColor={placeholderTextColor}
+        style={{ paddingRight: 0, fontSize: 20, fontWeight: '300' }}
         onChangeText={handlePhoneNumberChange} >
         {phoneInput}
       </TextInput>
@@ -289,16 +328,14 @@ export const PhoneValidationInput = () => {
 
 export const isValidEmail = (emailAddress: string) => {
   const re = /\S+@\S+\.\S+/;
-
-
-  return (re.test(emailAddress)) ? true : false
+  return (re.test(emailAddress) && validator.isEmail(emailAddress)) ? true : false
 }
 
 export const EmailValidationInput = () => {
   const [emailInput, setEmailInput] = useState('')
   const [countryPickerVisibility, setCountryPickerVisibility] = useState(false);
   const { countryCode, setUserEmail } = useStore()
-
+  const placeholderTextColor = useThemeColor({}, 'default')
 
   const handleEmailChange = (newEmail: string) => {
     const trimmedEmail = newEmail.trim().toLowerCase()
@@ -319,6 +356,7 @@ export const EmailValidationInput = () => {
       textAlign="center"
       keyboardType='email-address'
       placeholder={'Enter email address'}
+      placeholderTextColor={placeholderTextColor}
       style={{ padding: 5, marginLeft: 5, fontSize: 20, fontWeight: '300', }}
       onChangeText={handleEmailChange} >
       {emailInput.toLowerCase()}
@@ -340,6 +378,9 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
   const [preSelectedCountry, setPreSelectedCountry] = useState('')
   const { setCountryCallingCode, setCountryCode } = useStore()
 
+  const background = useThemeColor({}, 'background')
+  const border = useThemeColor({}, 'default')
+
   const handleCountryChange = (newCountry: string) => {
     const newCountryAsCountryCode = newCountry.toUpperCase() as CountryCode
     if (isSupportedCountry(newCountryAsCountryCode)) {
@@ -351,21 +392,19 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
   return <Modal
     animationType="slide"
     transparent={true}
-    visible={visible}>
-    <SafeAreaView style={{
-      flex: 1.5,
-      justifyContent: 'center',
-      alignItems: "center",
-      backgroundColor: 'transparent'
-    }}>
-      <View style={{
-        padding: 10,
+    visible={visible}
+  >
+    <Pressable
+      style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}
+      onPressOut={() => updateVisibility(false)}
+    >
+      <SafeAreaView style={{
+        backgroundColor: background,
         width: '70%',
-        height: 'auto',
+        padding: 10,
         borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#cdd2c9',
-        backgroundColor: '#f1f3f4f3',
+        borderWidth: 2,
+        borderColor: border,
       }}>
         <TextInput
           style={{
@@ -375,21 +414,20 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
             fontWeight: '300',
           }}
           onChangeText={(text) => setCountrySearch(text)}
-          placeholder="Search for Country">
+          placeholder="Search for Country"
+          placeholderTextColor={'cornflowerblue'}
+        >
           {countrySearch}
         </TextInput>
         <FlatList
           data={COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))}
           ListEmptyComponent={<Text align="center">No supported countries</Text>}
+          ItemSeparatorComponent={() => <View borderBottomColor={'white'} borderWidth={1} marginTop={2} />}
           renderItem={({ item, index, separators }) => {
             const filteredCountries = COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))
             return <Pressable
               onPressIn={() => setPreSelectedCountry(item.title)}
               onPressOut={() => setPreSelectedCountry('')}
-              style={{
-
-                borderBottomColor: '#38383874', borderBottomWidth: index === filteredCountries.length - 1 ? 0 : 1, opacity: preSelectedCountry === item.title ? .7 : 1
-              }}
               onPress={() => {
                 updateVisibility(false)
                 handleCountryChange(item.id)
@@ -409,8 +447,8 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
             </Pressable>
           }}
           keyExtractor={item => item.id} />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Pressable>
   </Modal >
 }
 

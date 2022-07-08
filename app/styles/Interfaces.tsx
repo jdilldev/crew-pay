@@ -1,8 +1,9 @@
+import { ReactNode } from "react"
 import { ViewStyle } from "react-native"
-import { IconPacks, IconProps, IconTypes } from "../types"
+import { IconPacks, VectorProps, IconTypes } from "../types"
 
 export interface TextThemeProps {
-    type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti'
+    type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti' | 'focused'
     size?: 'large' | 'medium' | 'small' | 'smallButton' | 'normalButton' | 'largeButton' | 'default'
     align?: 'center' | 'left' | 'right' | 'justify'
     spacing?: boolean,
@@ -19,26 +20,41 @@ export interface ViewThemeProps {
     transparent?: boolean
 }
 
+interface IconBasics {
 
-export interface IconThemeProps {
-    icon: IconTypes
-    pack: IconPacks
-    size?: 'large' | 'medium' | 'small'
     color?: string,
     style?: ViewStyle
     pressable?: boolean,
     onPress?: () => void
 }
 
+
+interface ExpoVector extends IconBasics {
+    name: IconTypes
+    pack: IconPacks
+    size?: number
+}
+
+interface SvgVector extends IconBasics {
+    name: string
+    pack?: never
+    size?: never
+    width?: number | string,
+    height?: number | string,
+}
+
+export type VectorThemeProps = ExpoVector | SvgVector
+
 export interface ButtonThemeProps {
     onPress: () => any
-    text: string,
-    icon?: IconProps,
+    text: string
+    icon?: VectorProps
     iconPosition?: 'start' | 'end'
+    weight?: '200' | '300' | 'normal' | 'bold'
     size?: 'largeButton' | 'normalButton' | 'smallButton'
     type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti'
     shape?: 'rounded' | 'oval' | 'square'
-    width?: 'full' | 'medium',
+    fullWidth?: boolean,
     customColor?: string
     capitalized?: boolean
     elevated?: boolean

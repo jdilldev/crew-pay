@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Button, Icon, } from '../../styles/styles'
+import { Button, Vector, } from '../../styles/styles'
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -18,11 +18,15 @@ import PiggyBankIcon from '../../assets/svgs/wallet-cash.svg'
 import MegaphoneIcon from '../../assets/svgs/megaphone.svg'
 import UserProfileIcon from '../../assets/svgs/abstract-octopus.svg'
 import LogoutIcon from '../../assets/svgs/logout.svg'
+import { useThemeColor } from '../../components/Themed';
 
 
 const Dashboard = () => {
     const { setCurrentUserID } = useAuthenticatedStore()
     const user = useUser()
+    const backgroundColor = useThemeColor({}, 'background')
+    const color = useThemeColor({}, 'text')
+    const dividerColor = 'lightgray'
 
     useEffect(() => {
         if (user)
@@ -36,13 +40,15 @@ const Dashboard = () => {
                 backBehavior='history'
                 initialRouteName='Activity'
                 screenOptions={({ route }) => ({
-                    /*    headerStyle: {
-                           backgroundColor: '#f4511e',
-                       },
-                       headerTintColor: '#fff',
-                       headerTitleStyle: {
-                           fontWeight: 'bold',
-                       }, */
+                    headerStyle: {
+                        backgroundColor,
+                        borderBottomColor: dividerColor,
+                        borderBottomWidth: 1
+                    },
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                        color
+                    },
                     tabBarIcon: ({ size, color }) => {
                         switch (route.name) {
                             case 'Activity':
@@ -56,7 +62,9 @@ const Dashboard = () => {
                         }
                     },
                     tabBarStyle: {
-                        height: 90,
+                        height: '10%',
+                        padding: 5,
+                        backgroundColor
                     },
                     tabBarLabelStyle: { fontSize: 12 },
                     headerRight: () => (

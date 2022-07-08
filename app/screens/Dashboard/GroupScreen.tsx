@@ -30,10 +30,8 @@ const GroupScreen = () => {
                 <Button text='Add Group' onPress={() => {
                     try {
                         realm.write(() => {
-
                             const newGroup = realm.create<Group>("Group", Group.generate('name', 'breif desc', currentUserID));
                             currentUser.addGroup(newGroup._id.toHexString())
-
                         });
                     } catch (err) {
                         console.log("Error creating Group: " + err);

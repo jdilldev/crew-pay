@@ -1,8 +1,14 @@
 import React, { ReactNode, useState } from 'react'
-import { ButtonGroup, Icon, Text, View } from '../../../styles/styles'
-import { SectionList, Image, Switch, Modal, SafeAreaView } from 'react-native'
+import { ButtonGroup, Vector, Text, View } from '../../../styles/styles'
+import { SectionList, Image, Switch, } from 'react-native'
 import { IconPacks, IconTypes } from '../../../types';
 import Application from './Application';
+import { ApplicationStatus } from "@unit-finance/unit-node-sdk";
+import { TextThemeProps } from '../../../styles/Interfaces';
+import { useThemeColor } from '../../../components/Themed';
+import RealmContext, { User } from '../../../database';
+const { useObject } = RealmContext
+import { useAuthenticatedStore } from '../../../GlobalUserSettingsContext';
 
 type CommonProps = {
     icon: IconTypes,
@@ -49,6 +55,7 @@ const DATA: ProfileProps[] = [
 
 ];
 
+
 const Item = ({ icon, name, pack, toggle, component, subText }: ItemProps) => {
     const [expand, setExpand] = useState(false)
 
@@ -56,13 +63,13 @@ const Item = ({ icon, name, pack, toggle, component, subText }: ItemProps) => {
         name === 'Authentication Method' ? <ButtonGroup buttons={['FaceID', 'SMS Code']} /> :
             <View orientation='column' >
                 <View orientation='row' paddingVertical={10} alignItems='flex-start'>
-                    <Icon color='teal' icon={icon} pack={pack} />
+                    <Vector color='teal' name={icon} pack={pack} />
                     <View marginLeft={20}>
-                        <Text size='default' fontWeight='normal'>{name}</Text>
+                        <Text size='default' fontWeight='300'>{name}</Text>
                         {subText && <Text size='small' type='secondary'>{subText}</Text>}
                     </View>
                     <View position='absolute' right={20}>
-                        {toggle === true ? <Switch /> : <Icon color='gray' pressable onPress={() => setExpand(!expand)} size='medium' icon={expand ? 'arrow-up' : 'arrow-down'} pack='simple' />}
+                        {toggle === true ? <Switch /> : <Vector color='gray' pressable onPress={() => setExpand(!expand)} size={15} name={expand ? 'arrow-up' : 'arrow-down'} pack='simple' />}
                     </View>
                 </View>
                 {expand && component}
@@ -70,9 +77,25 @@ const Item = ({ icon, name, pack, toggle, component, subText }: ItemProps) => {
     )
 };
 
+const applicationStatus: { [name: string]: { text: string, icon: string, type: TextThemeProps['type'] } } = {
+    'AwaitingDocuments': { text: 'Awaiting Documents', icon: 'phone', type: 'warning' },
+    'PendingReview': { text: 'Pending Review', icon: 'home', type: 'warning' },
+    'Pending': { text: 'Pending', icon: 'email', type: 'warning' },
+    'Approved': { text: 'Approved', icon: 'home', type: 'success' },
+    'Denied': { text: 'Denied', icon: 'home', type: 'error' },
+    'Uninitiated': { text: 'Not Started', icon: 'home', type: 'default' }
+
+}
+
 
 const ProfileDetails = () => {
     const [openModal, setOpenModal] = useState(false)
+    const [status, setStatus] = useState<ApplicationStatus | 'Uninitiated'>('Uninitiated')
+    const { currentUserID } = useAuthenticatedStore()
+    const currentUser = currentUserID ? useObject(User, currentUserID) : null
+    const country = currentUser ? currentUser.nationality : 'US'
+
+    const color = useThemeColor({}, applicationStatus[status].type!)
     return <View flex={1} >
         <View align='center' justify='center' spacing={true}>
             <View marginTop={5} width={150} height={150} borderRadius={30} overflow='hidden'>
@@ -80,10 +103,12 @@ const ProfileDetails = () => {
                     style={{ width: '100%', height: '100%' }}
                     source={require('../../../assets/images/real/cool-friends-sunset.jpg')} />
             </View>
-            <Text fontSize={30} textTransform='capitalize'>Name</Text>
-            <Text onPress={() => setOpenModal(true)}>Status</Text>
+            <Text fontSize={30} textTransform='capitalize' fontWeight='300' spacing={false}>Name</Text>
+            <View orientation='row' alignItems='center'>
+                <Text type={applicationStatus[status].type} marginRight={3} fontWeight='bold' onPress={() => setOpenModal(true)}>{applicationStatus[status].text}</Text>
+                <Vector name={applicationStatus[status].icon} color={color} />
+            </View>
         </View>
-
         <SectionList
             style={{ marginLeft: 20 }}
             sections={DATA}
@@ -96,8 +121,9 @@ const ProfileDetails = () => {
                 <Text size='small' fontWeight='bold' textTransform='uppercase'>{title}</Text>
             )}
         />
-        <Application openFromProfile={openModal} setOpenFromProfile={setOpenModal} />
+        <Application region={country} openFromProfile={openModal} setOpenFromProfile={setOpenModal} />
     </View>
 }
 
 export default ProfileDetails
+

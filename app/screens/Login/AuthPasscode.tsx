@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, } from '../../styles/styles'
-import OTP from '../../assets/svgs/OTP-phone.svg'
+import { View, Text, Vector, } from '../../styles/styles'
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import { KeyboardAvoidingView, Platform, TextInput } from 'react-native'
 import { LoginType, RootStackScreenProps } from '../../types'
@@ -8,7 +7,6 @@ import parsePhoneNumber from 'libphonenumber-js'
 import { storeDataAsyncStorage, useStore } from '../../GlobalUserSettingsContext'
 import { useAuthOTP } from '../../hooks/useStytch'
 import { useApp } from '@realm/react'
-import axios from 'axios'
 
 const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'>) => {
     const { methodID, userID } = route.params
@@ -31,11 +29,13 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
             };
             const updateDoc = {
                 $set: {
+                    phone: authType === LoginType.PHONE ? userPhone : undefined,
+                    email: authType !== LoginType.PHONE ? userEmail : undefined,
                     nationality: countryCode,
+                    verificationType: countryCode !== 'US' ? 'passport' : 'ssn'
                 },
             };
             const result = await userCollection.updateOne(filter, updateDoc);
-            console.log(result);
         } catch (error) {
             throw `Error logging in with custom function calling Stytch API: ${error}`;
         }
@@ -47,11 +47,7 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
         behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
         <View flex={1}>
-            <OTP
-                style={{
-                    width: DEVICE_WIDTH,
-                    height: DEVICE_HEIGHT / 2
-                }} />
+            <Vector name='one-time-password' width={'100%'} height={'100%'} />
         </View>
         <View flex={1} >
             <View justify='center' align='center'>

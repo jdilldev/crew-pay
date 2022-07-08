@@ -3,6 +3,7 @@ import { LogBox } from "react-native";
 const ignoreWarns = [
 	"ViewPropTypes will be removed",
 	"BSON: For React Native please polyfill crypto.getRandomValues",
+	"Animated: `useNativeDriver` was not specified.",
 ];
 const warn = console.warn;
 console.warn = (...arg) => {
