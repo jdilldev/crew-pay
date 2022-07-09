@@ -25,6 +25,7 @@
     "@types/": "unit-finance/unit-node-sdk",
     "@unit-finance/unit-node-sdk": "^0.9.33",
     "axios": "^0.27.2",
+    "crypto-js": "^4.1.1",
     "expo": "^45.0.0",
     "expo-dev-client": "~1.0.0",
     "expo-linear-gradient": "^11.3.0",

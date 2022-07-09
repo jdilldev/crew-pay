@@ -1,5 +1,6 @@
 import { Realm } from "@realm/react";
 import { CountryCode } from "libphonenumber-js";
+import { FullName, Address } from "@unit-finance/unit-node-sdk";
 
 export default class User extends Realm.Object {
 	_id!: string;
