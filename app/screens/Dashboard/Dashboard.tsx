@@ -26,6 +26,7 @@ const Dashboard = () => {
     const user = useUser()
     const backgroundColor = useThemeColor({}, 'background')
     const color = useThemeColor({}, 'text')
+    const primaryColor = useThemeColor({}, 'primary')
     const dividerColor = 'lightgray'
 
     useEffect(() => {
@@ -75,14 +76,14 @@ const Dashboard = () => {
                             <LogoutIcon fill={'black'} width={30} height={30} />
                         </Pressable>
                     ),
-                    tabBarActiveTintColor: 'teal',
+                    tabBarActiveTintColor: primaryColor,
                     tabBarInactiveTintColor: 'gray',
                 })}>
                 <Tab.Screen name="Activity"
                     component={ActivityScreen}
                     options={{
                         tabBarBadge: undefined,
-                        tabBarBadgeStyle: { backgroundColor: 'teal', fontWeight: 'bold' },
+                        tabBarBadgeStyle: { backgroundColor: primaryColor, fontWeight: 'bold' },
                     }} />
                 <Tab.Screen name="Funds" component={FundsScreen} />
                 <Tab.Screen name="Groups" component={GroupScreen} />

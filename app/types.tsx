@@ -3,6 +3,7 @@ import { Ionicons, MaterialIcons, SimpleLineIcons, Zocial } from '@expo/vector-i
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { CountryCode } from 'libphonenumber-js';
 import {
   View as DefaultView,
   Text as DefaultText,
@@ -45,8 +46,19 @@ export const useThemeColor = (
 export enum LoginType { 'PHONE', 'EMAIL', 'GMAIL' }
 
 export type ApplicationInput = {
-  name: string;
+  firstName: string;
+  lastName: string;
+  countryCallingCode: string;
+  phoneNumber: string;
+  email: string;
   dob: string;
+  idType: string;
+  idNumber: string;
+  street1: string;
+  street2: string;
+  city: string;
+  postalCode: string;
+  nationality: CountryCode;
 };
 
 

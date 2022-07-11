@@ -35,7 +35,7 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
                     verificationType: countryCode !== 'US' ? 'passport' : 'ssn'
                 },
             };
-            const result = await userCollection.updateOne(filter, updateDoc);
+            await userCollection.updateOne(filter, updateDoc);
         } catch (error) {
             throw `Error logging in with custom function calling Stytch API: ${error}`;
         }

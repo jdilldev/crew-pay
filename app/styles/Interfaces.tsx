@@ -3,7 +3,7 @@ import { ViewStyle } from "react-native"
 import { IconPacks, VectorProps, IconTypes } from "../types"
 
 export interface TextThemeProps {
-    type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti' | 'focused'
+    type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti' | 'focused' | 'divider' | 'pending'
     size?: 'large' | 'medium' | 'small' | 'smallButton' | 'normalButton' | 'largeButton' | 'default'
     align?: 'center' | 'left' | 'right' | 'justify'
     spacing?: boolean,

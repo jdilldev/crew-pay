@@ -2,7 +2,21 @@ import { gql } from "apollo-server-lambda";
 
 export const typeDefs = gql`
 	type Query {
-		createApplication: CreateApplicationResponse
+		createApplication(
+			firstName: String
+			lastName: String
+			countryCallingCode: String
+			phoneNumber: String
+			email: String
+			dob: String
+			idType: String
+			idNumber: String
+			street1: String
+			street2: String
+			city: String
+			postalCode: String
+			nationality: String
+		): CreateApplicationResponse
 		createDepositAccount: String
 		createApplicationForm: String
 		createCard: Int
@@ -17,10 +31,8 @@ export const typeDefs = gql`
 	type ApplicationResponse {
 		id: String
 		userStatus: String
-		message: String
 		documents: [Document]
 		createdAt: String
-		error: String
 	}
 
 	type ApplicationFormResponse {

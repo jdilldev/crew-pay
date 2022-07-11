@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 import { ButtonGroup, Vector, Text, View } from '../../../styles/styles'
-import { SectionList, Image, Switch, } from 'react-native'
+import { SectionList, Image, Switch, Pressable, } from 'react-native'
 import { IconPacks, IconTypes } from '../../../types';
 import Application from './Application';
 import { ApplicationStatus } from "@unit-finance/unit-node-sdk";
@@ -58,12 +58,13 @@ const DATA: ProfileProps[] = [
 
 const Item = ({ icon, name, pack, toggle, component, subText }: ItemProps) => {
     const [expand, setExpand] = useState(false)
+    const color = useThemeColor({}, 'primary')
 
     return (
         name === 'Authentication Method' ? <ButtonGroup buttons={['FaceID', 'SMS Code']} /> :
             <View orientation='column' >
                 <View orientation='row' paddingVertical={10} alignItems='flex-start'>
-                    <Vector color='teal' name={icon} pack={pack} />
+                    <Vector color={color} name={icon} pack={pack} />
                     <View marginLeft={20}>
                         <Text size='default' fontWeight='300'>{name}</Text>
                         {subText && <Text size='small' type='secondary'>{subText}</Text>}
@@ -78,15 +79,13 @@ const Item = ({ icon, name, pack, toggle, component, subText }: ItemProps) => {
 };
 
 const applicationStatus: { [name: string]: { text: string, icon: string, type: TextThemeProps['type'] } } = {
-    'AwaitingDocuments': { text: 'Awaiting Documents', icon: 'phone', type: 'warning' },
-    'PendingReview': { text: 'Pending Review', icon: 'home', type: 'warning' },
-    'Pending': { text: 'Pending', icon: 'email', type: 'warning' },
-    'Approved': { text: 'Approved', icon: 'home', type: 'success' },
-    'Denied': { text: 'Denied', icon: 'home', type: 'error' },
-    'Uninitiated': { text: 'Not Started', icon: 'home', type: 'default' }
-
+    'AwaitingDocuments': { text: 'Awaiting Documents', icon: 'warning-outlined', type: 'warning' },
+    'PendingReview': { text: 'Pending Review', icon: 'pending', type: 'pending' },
+    'Pending': { text: 'Pending', icon: 'pending', type: 'pending' },
+    'Approved': { text: 'Approved', icon: 'check-outlined', type: 'success' },
+    'Denied': { text: 'Denied', icon: 'cancel-outlined', type: 'error' },
+    'Uninitiated': { text: 'Not Started', icon: 'minus-outlined', type: 'divider' }
 }
-
 
 const ProfileDetails = () => {
     const [openModal, setOpenModal] = useState(false)
@@ -96,18 +95,20 @@ const ProfileDetails = () => {
     const country = currentUser ? currentUser.nationality : 'US'
 
     const color = useThemeColor({}, applicationStatus[status].type!)
-    return <View flex={1} >
+    return currentUser ? <View flex={1} >
         <View align='center' justify='center' spacing={true}>
             <View marginTop={5} width={150} height={150} borderRadius={30} overflow='hidden'>
                 <Image
                     style={{ width: '100%', height: '100%' }}
                     source={require('../../../assets/images/real/cool-friends-sunset.jpg')} />
             </View>
-            <Text fontSize={30} textTransform='capitalize' fontWeight='300' spacing={false}>Name</Text>
-            <View orientation='row' alignItems='center'>
-                <Text type={applicationStatus[status].type} marginRight={3} fontWeight='bold' onPress={() => setOpenModal(true)}>{applicationStatus[status].text}</Text>
-                <Vector name={applicationStatus[status].icon} color={color} />
-            </View>
+            <Text fontSize={30} textTransform='capitalize' fontWeight='300' spacing={false}>{currentUser.firstName ? currentUser.firstName : 'Hello!'}</Text>
+            <Pressable onPress={() => setOpenModal(true)}>
+                <View orientation='row' alignItems='center'>
+                    <Vector style={{ marginRight: 3 }} width={15} height={15} name={applicationStatus[status].icon} color={color} />
+                    <Text fontSize={20} type={applicationStatus[status].type} fontWeight='normal'>{applicationStatus[status].text}</Text>
+                </View>
+            </Pressable>
         </View>
         <SectionList
             style={{ marginLeft: 20 }}
@@ -123,6 +124,7 @@ const ProfileDetails = () => {
         />
         <Application region={country} openFromProfile={openModal} setOpenFromProfile={setOpenModal} />
     </View>
+        : <Text>No data</Text>
 }
 
 export default ProfileDetails

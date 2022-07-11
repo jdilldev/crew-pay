@@ -14,25 +14,59 @@ dotenv.config();
 
 const unit = new Unit(environment.UNIT_TOKEN, environment.UNIT_API_URL);
 
+type ApplicationArgs = {
+	firstName: string;
+	lastName: string;
+	countryCallingCode: string;
+	phoneNumber: string;
+	email: string;
+	dob: string;
+	idType: string;
+	idNumber: string;
+	street1: string;
+	street2: string;
+	city: string;
+	postalCode: string;
+	nationality: string;
+};
+
 export const resolvers = {
 	Query: {
-		createApplication: async () => {
+		createApplication: async (
+			_: undefined,
+			{
+				firstName,
+				lastName,
+				countryCallingCode,
+				phoneNumber,
+				email,
+				dob,
+				idType,
+				idNumber,
+				street1,
+				street2,
+				city,
+				postalCode,
+				nationality,
+			}: ApplicationArgs
+		) => {
 			const individalApplicationRequest: CreateIndividualApplicationRequest = {
 				type: "individualApplication",
 				attributes: {
-					ssn: "000000000",
-					fullName: unit.helpers.createFullName("Zoe", "Landon"),
-					dateOfBirth: "2001-08-10",
+					...(idType === "ssn" && { ssn: idNumber }),
+					...(idType === "passport" && { passport: idNumber }),
+					fullName: unit.helpers.createFullName(firstName, lastName),
+					dateOfBirth: dob,
 					address: unit.helpers.createAddress(
-						"123 Best Kids St",
-						null,
-						"Nottingham",
+						street1,
+						street2,
+						city,
 						"MD",
-						"21236",
-						"US"
+						postalCode,
+						nationality
 					),
-					email: "tester@testing.com",
-					phone: unit.helpers.createPhone("1", "5555555555"),
+					email: email,
+					phone: unit.helpers.createPhone(countryCallingCode, phoneNumber),
 				},
 			};
 

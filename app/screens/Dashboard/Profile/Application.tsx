@@ -5,21 +5,21 @@ import { Button, Vector, Text, View, isValidEmail, TextInput } from '../../../st
 import RealmContext, { User } from '../../../database'
 import { useAuthenticatedStore } from '../../../GlobalUserSettingsContext';
 const { useObject, useRealm } = RealmContext
+import { useCreateApplication } from '../../../hooks/useUnit';
 import CheckBox from '@react-native-community/checkbox';
 import validator from 'validator';
 import DatePicker from 'react-native-date-picker'
-
 import {
     parsePhoneNumber,
     isValidNumberForRegion,
     CountryCode,
+    getCountryCallingCode,
     parseNumber,
     parsePhoneNumberWithError,
     ParseError,
     isPossiblePhoneNumber,
     validatePhoneNumberLength,
 } from 'libphonenumber-js'
-
 import { LinearGradient } from 'expo-linear-gradient';
 import { useThemeColor } from '../../../components/Themed';
 import useColorScheme from '../../../hooks/useColorScheme';
@@ -93,6 +93,8 @@ const Field = ({ value, setValue, fieldType, icon, label, width, region, subType
     const errorColor = useThemeColor({}, 'error')
     const textColor = useThemeColor({}, 'text')
     const focusedColor = useThemeColor({}, 'focused')
+    const gray = useThemeColor({}, 'divider')
+
 
     let field = <></>
 
@@ -127,7 +129,8 @@ const Field = ({ value, setValue, fieldType, icon, label, width, region, subType
                     const result = phoneValidation(e, region)
 
                     if (result === '')
-                        setErrorMessage('')
+                        setValue(parsePhoneNumber(e, region).nationalNumber)
+                    setErrorMessage('')
                     if (e !== '' && ((isPossiblePhoneNumber(e, region) || result === 'TOO_LONG' || result === 'NOT_A_NUMBER')))
                         result === 'TOO_LONG' ? setErrorMessage('Invalid phone number: too many digits') : result === 'NOT_A_NUMBER' ? setErrorMessage('Invalid phone number: digits only') : setErrorMessage(result)
                     else
@@ -185,6 +188,8 @@ const Field = ({ value, setValue, fieldType, icon, label, width, region, subType
             useEffect(() => {
                 if ((first + second + third).length === 9)
                     setValue(first + second + third)
+                else
+                    setValue('')
             }, [first, second, third])
 
             field = <View flex={1} orientation='row' transparent alignItems='center' justifyContent='center' marginRight={5}>
@@ -217,16 +222,18 @@ const Field = ({ value, setValue, fieldType, icon, label, width, region, subType
         case 'passport':
             return <Text>passport</Text>
         case 'birthday':
-            const today = new Date();
+            const today = new Date()
             const _8yearsAgo = new Date(today.getFullYear() - 8, today.getMonth(), today.getDate())
-            const [date, setDate] = useState<Date>(_8yearsAgo)
+            const savedDate = value ? new Date(value) : _8yearsAgo
+            const [date, setDate] = useState<Date>(savedDate)
+
             field = <>
                 <Text
                     spacing={false}
                     textAlign='center'
                     onPress={() => setDatePickerOpen(!datePickerOpen)}
                     fontSize={17}>
-                    {value}
+                    {value === '' ? '' : date?.toLocaleDateString('en-us', { year: "numeric", month: 'long', day: "numeric" })}
                 </Text>
                 <DatePicker
                     modal
@@ -237,7 +244,7 @@ const Field = ({ value, setValue, fieldType, icon, label, width, region, subType
                     date={date}
                     onConfirm={(date) => {
                         setDate(date)
-                        setValue(date?.toLocaleDateString('en-us', { year: "numeric", month: 'long', day: "numeric" }))
+                        setValue(date.toISOString())
                     }}
                     onCancel={() => {
                         setDatePickerOpen(false)
@@ -255,7 +262,7 @@ const Field = ({ value, setValue, fieldType, icon, label, width, region, subType
 
         <View height={35} marginRight={10} transparent orientation='row' alignItems='center' backgroundColor={'#98989815'} borderRadius={0} borderWidth={1} borderColor={errorMessage !== '' ? errorColor : isFocused ? focusedColor : textColor} padding={5}>
             {<View flex={1} transparent marginLeft={2}>{field}</View>}
-            {errorMessage === '' && value !== '' ? <Vector name='check' width={10} height={10} /> : null}
+            {errorMessage === '' && value !== '' ? <Vector name='check' width={10} height={10} style={{ marginRight: 3 }} /> : null}
         </View>
         {errorMessage.trim() !== '' && <Text spacing={false} type='error' size='small'>{errorMessage}</Text>}
     </View>
@@ -265,6 +272,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
     const { currentUserID } = useAuthenticatedStore()
     const currentUser = currentUserID ? useObject(User, currentUserID) : null
     const applicationID = currentUser ? currentUser.applicationID : null
+    const verificationMethod = currentUser?.verificationType!
     const [applicationModalVisibile, setApplicationModalVisible] = useState(!applicationID)
 
     //fields
@@ -273,9 +281,10 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
     const [phone, setPhone] = useState(currentUser?.phone || '')
     const [email, setEmail] = useState(currentUser?.email || '')
     const [streetAddress, setStreetAddress] = useState('')
+    const [streetAddress2, setStreetAddress2] = useState('')
     const [city, setCity] = useState('')
     const [postalCode, setPostalCode] = useState('')
-    const [dob, setDob] = useState('')
+    const [dob, setDob] = useState(currentUser?.dob || '')
     const [idNumber, setIdNumber] = useState('')
     const [userAgreementCheck, setUserAgreementCheck] = useState(false)
     const [termsAndDisclosuresCheck, settermsAndDisclosuresCheck] = useState(false)
@@ -283,6 +292,8 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
     const textColor = useThemeColor({}, 'text')
     const backgroundColor = useThemeColor({}, 'background')
 
+    console.log(phone)
+    //https://developers.google.com/maps/documentation/javascript/places-autocomplete
     const saveData = () => {
         if (currentUser) {
             try {
@@ -306,7 +317,6 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
                 console.log("Error saving user data: " + err);
             }
         }
-
     }
 
     const handleClose = () => {
@@ -314,18 +324,62 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
         setOpenFromProfile(false)
         setUserAgreementCheck(false)
         settermsAndDisclosuresCheck(false)
-
         saveData()
+
         if (currentUser?.verificationType === 'ssn')
             setIdNumber('')
     }
 
+    const onSubmit = async () => {
+        try {
+            realm.write(() => {
+                realm.create(
+                    User,
+                    {
+                        _id: currentUserID,
+                        address: streetAddress,
+                        uniqueVerificationNumber: idNumber
+                    },
+                    UpdateMode.Modified
+                );
+            });
+        } catch (err) {
+            console.log("Error saving user dat on submit: " + err);
+        }
+
+        try {
+            const result = await useCreateApplication({
+                firstName,
+                lastName,
+                countryCallingCode: getCountryCallingCode(region),
+                phoneNumber: phone,
+                email: email,
+                dob: dob.split('T')[0],
+                idType: verificationMethod,
+                idNumber,
+                street1: streetAddress,
+                street2: streetAddress2,
+                city,
+                postalCode,
+                nationality: region
+            })
+
+            console.log('humdinger!')
+            console.log(result)
+
+        } catch (err) {
+            console.log('Error submitting application to Unit ' + err)
+        }
+    }
+
+
     const isFormInvalid = () => {
-        const idValid = currentUser?.verificationType === 'ssn'
+        const idValid = verificationMethod === 'ssn'
             ? idNumber.length === 9
             : passportValidation(idNumber, region)
 
-        return !(phoneValidation(phone, region) === ''
+        return !(
+            phoneValidation(phone, region) === ''
             && emailValidation(email)
             && userAgreementCheck
             && termsAndDisclosuresCheck
@@ -364,8 +418,9 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
                         <Field icon={'email'} fieldType='email' label={'Email'} value={email} setValue={setEmail} />
 
                         <Text marginTop={15} type='primary' size='small' spacing={false}>{'Address'.toUpperCase()}</Text>
+                        <Field fieldType='street' region={region} label={'Street'} value={streetAddress} setValue={setStreetAddress} />
                         <View orientation='row'>
-                            <Field width={'72%'} fieldType='street' region={region} label={'Street'} value={streetAddress} setValue={setStreetAddress} />
+                            <Field width={'72%'} fieldType='street' region={region} label={'Street 2 (optional)'} value={streetAddress2} setValue={setStreetAddress2} />
                             <Field width={'23%'} fieldType='text' label={'Country'} value={currentUser.nationality} readonly setValue={() => { }} />
                         </View>
                         <View orientation='row'>
@@ -376,7 +431,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
                         <Text marginTop={15} type='primary' size='small' spacing={false}>{'Identity Verification'.toUpperCase()}</Text>
                         <View orientation='row' justifyContent='center' alignItems='center' flexWrap='wrap'>
                             <Field width={'63%'} icon={'calendar'} fieldType='birthday' label={'Date of Birth'} value={dob} setValue={setDob} />
-                            {currentUser.verificationType === 'ssn'
+                            {verificationMethod === 'ssn'
                                 ? <Field width={DEVICE_WIDTH < 400 ? '70%' : '63%'} icon={'ssn'} fieldType='ssn' label={'Social Security Number'} value={idNumber} setValue={setIdNumber} />
                                 : <Field width={'63%'} region={region} icon={'passport'} fieldType='passport' label={'Passport Number'} value={idNumber} setValue={setIdNumber} />}
                         </View>
@@ -410,7 +465,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile }: { region: 
                     <View orientation='row' justifyContent='space-around' spacing={true}>
                         <Button weight='300' outlined size='smallButton' text={'Cancel'} onPress={() =>
                             handleClose()} />
-                        <Button weight='300' type='primary' size='smallButton' disabled={isFormInvalid()} text={'Submit'} onPress={() => console.log('mim')} />
+                        <Button weight='300' type='primary' size='smallButton' disabled={isFormInvalid()} text={'Submit'} onPress={() => onSubmit()} />
                     </View>
                 </View>
             </SafeAreaView>

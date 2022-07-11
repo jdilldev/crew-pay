@@ -139,28 +139,28 @@ export const Vector = ({
   ...otherProps }: VectorProps) => {
   let Icon = null;
   const iconColor = color ? color : useThemeColor({ light: lightColor, dark: darkColor }, 'default')
+  const { style } = otherProps
 
   if (name && pack) {
     switch (pack) {
       case 'ion':
-        Icon = <Ionicons name={name as IoniconTypes} color={iconColor} size={size} {...otherProps} />
+        Icon = <Ionicons name={name as IoniconTypes} color={iconColor} size={size} style={style} {...otherProps} />
         break;
       case 'material':
-        Icon = <MaterialIcons name={name as MaterialIconTypes} color={iconColor} size={size} {...otherProps} />
+        Icon = <MaterialIcons name={name as MaterialIconTypes} color={iconColor} size={size} style={style} {...otherProps} />
         break;
       case 'simple':
-        Icon = <SimpleLineIcons name={name as SimpleIconTypes} color={iconColor} size={size}{...otherProps} />
+        Icon = <SimpleLineIcons name={name as SimpleIconTypes} color={iconColor} size={size} style={style} {...otherProps} />
         break;
       case 'zocial':
-        Icon = <Zocial name={name as ZocialIconTypes} color={iconColor} size={size} {...otherProps} />
+        Icon = <Zocial name={name as ZocialIconTypes} color={iconColor} size={size} style={style} {...otherProps} />
         break;
     }
   } else {
-    Icon = getSVG(name, color, width, height)
+    Icon = getSVG(name, color, width, height, style)
   }
 
-
-  return onPress ? <Pressable onPress={onPress}>{Icon}</Pressable> : Icon;
+  return onPress ? <Pressable onPress={onPress} style={style}>{Icon}</Pressable> : Icon;
 }
 
 
@@ -228,7 +228,9 @@ export const Button = ({
 
 export const ButtonGroup = ({ buttons, otherProps }: { buttons: string[], otherProps?: ButtonProps }) => {
   const [selected, setSelected] = useState(0)
-  return <View orientation='row' justify='center' borderColor={'teal'} borderWidth={1} width={DEVICE_WIDTH}>
+  const borderColor = useThemeColor({}, 'primary')
+
+  return <View orientation='row' justify='center' borderColor={borderColor} borderWidth={1} width={DEVICE_WIDTH}>
     {buttons.map((buttonText, index) =>
       <Button type='primary' key={buttonText} outlined={selected !== index} size='smallButton' shape={'square'} style={{ width: (DEVICE_WIDTH) / (buttons.length), borderColor: 'transparent', marginHorizontal: -1 }} onPress={() => { setSelected(index) }} text={buttonText} {...otherProps}></Button>
     )}
