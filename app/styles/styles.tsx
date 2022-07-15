@@ -476,7 +476,7 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
           data={COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))}
           ListEmptyComponent={<Text align="center">No supported countries</Text>}
           ItemSeparatorComponent={() => <View borderBottomColor={'white'} borderWidth={1} marginTop={2} />}
-          renderItem={({ group: item, index, separators }) => {
+          renderItem={({ item, index, separators }) => {
             const filteredCountries = COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))
             return <Pressable
               onPressIn={() => setPreSelectedCountry(item.title)}

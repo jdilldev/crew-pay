@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApp, useUser } from '@realm/react';
 import RealmContext, { Group, User } from '../../database'
 import { Button, Text, TextInput, Vector, View } from '../../styles/styles';
-import { FlatList, Modal, Pressable, SafeAreaView, Image } from 'react-native';
+import { FlatList, Modal, ListRenderItem, SafeAreaView, Image } from 'react-native';
 import { useAuthenticatedStore } from '../../GlobalUserSettingsContext';
 const { useRealm, useQuery, useObject } = RealmContext
 import WaitImage from '../../assets/svgs/frightened.svg'
 import { Field } from '../../components/Field';
+import { List } from 'realm';
 
 type GroupUsageType = 'unilateral' | 'shared'
 const GroupScreen = () => {
@@ -91,8 +92,8 @@ const GroupScreen = () => {
                     <Text size='small' type='primary'>GROUPS</Text>
                     <FlatList
                         data={groups}
-                        keyExtractor={group => group._id.toString()}
-                        renderItem={({ group: item }) => {
+                        keyExtractor={task => task._id.toString()}
+                        renderItem={({ item }) => {
                             return <View borderColor={'gray'}>
                                 <View orientation='row' alignItems='center' justifyContent='space-between' spacing={false}>
                                     <View orientation='row' alignItems='center'>
