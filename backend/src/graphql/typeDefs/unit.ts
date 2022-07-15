@@ -19,6 +19,7 @@ export const typeDefs = gql`
 		): CreateApplicationResponse
 		createDepositAccount: String
 		createApplicationForm: String
+		getApplicationStatus(applicationId: String): String
 		createCard: Int
 	}
 

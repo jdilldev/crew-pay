@@ -24,6 +24,7 @@ import Incorrect from "../assets/svgs/incorrect.svg";
 import License from '../assets/svgs/license-simple.svg'
 import MaleUser from '../assets/svgs/male-user.svg'
 import MinusOutlined from '../assets/svgs/minus-outlined.svg'
+import NewGroup from '../assets/svgs/new-group.svg'
 import OneTimePassword from '../assets/svgs/OTP-phone.svg'
 import Passport from '../assets/svgs/passport.svg'
 import Pending from '../assets/svgs/pending.svg'
@@ -109,6 +110,9 @@ export const getSVG = (name: string, fill: string, width: number | string, heigh
         }
         case 'minus-outlined': {
             return <MinusOutlined fill={fill} width={width} height={height} style={style} />
+        }
+        case 'new-group': {
+            return <NewGroup fill={fill} width={width} height={height} style={style} />
         }
         case 'one-time-password': {
             return <OneTimePassword fill={fill} width={width} height={height} style={style} />

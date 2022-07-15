@@ -122,7 +122,23 @@ export const resolvers = {
 				console.log(err);
 			}
 		},
-		createDepositAccount: () => "ZoeLandon",
+		getApplicationStatus: async (
+			_: undefined,
+			{ applicationId }: { applicationId: string }
+		) => {
+			try {
+				const {
+					data: {
+						attributes: { status },
+					},
+				} = await unit.applications.get(applicationId);
+
+				return status;
+			} catch (err) {
+				console.log(err.message);
+				return "Uninitiated";
+			}
+		},
 		createCard: () => 1000000000,
 	},
 	CreateApplicationResponse: {

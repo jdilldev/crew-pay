@@ -7,6 +7,7 @@ export default class User extends Realm.Object {
 	stytchID!: string;
 	firstName?: string;
 	lastName?: string;
+	displayName?: string;
 	dob?: string | undefined;
 	address?: string | undefined;
 	phone?: string;
@@ -18,7 +19,8 @@ export default class User extends Realm.Object {
 	isActive?: boolean;
 	applicationID?: string | undefined;
 	customerID?: string | undefined;
-	groups?: string[];
+	groups!: string[];
+	pendingGroups!: string[];
 
 	// To use a class as a Realm object type, define the object schema on the static property "schema".
 	static schema = {
@@ -31,6 +33,7 @@ export default class User extends Realm.Object {
 			customerID: { type: "string?", mapTo: "customerID" },
 			firstName: { type: "string?", mapTo: "firstName" },
 			lastName: { type: "string?", mapTo: "lastName" },
+			displayName: "string",
 			dob: "string?",
 			address: "string?",
 			phone: "string?",
@@ -45,6 +48,7 @@ export default class User extends Realm.Object {
 			isActive: { type: "bool", default: false },
 			createdAt: { type: "date", default: new Date() },
 			groups: "string[]", //"Group{}"
+			pendingGroups: "string[]",
 		},
 	};
 

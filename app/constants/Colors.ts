@@ -16,7 +16,7 @@ export default {
 		divider: "rgba(0, 0, 0, 0.4)",
 		anti: "#fff",
 		background: "#fafafa",
-		tint: tintColorLight,
+		tint: "rgba(0, 0, 0, 0.4)",
 		tabIconDefault: "#ccc",
 		tabIconSelected: tintColorLight,
 	},

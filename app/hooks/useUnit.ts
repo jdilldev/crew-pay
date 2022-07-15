@@ -78,10 +78,30 @@ const createIndividualApplication = (fields: ApplicationInput) => {
 };
 
 export const useCreateApplication = (fields: ApplicationInput) => {
-	const r = async () => {
+	const createApplication = async () => {
 		const res = await createIndividualApplication(fields);
 
 		return res;
 	};
-	return r();
+	return createApplication();
+};
+
+const getApplicationStatusByID = (id: string) => {
+	return request(
+		endpoint,
+		gql`
+			query ($applicationId: String) {
+				getApplicationStatus(applicationId: $applicationId)
+			}
+		`,
+		{ applicationId: id }
+	);
+};
+
+export const useGetApplicationByID = (id: string) => {
+	return useQuery("getApplicationStatus", async () => {
+		const { getApplicationStatus } = await getApplicationStatusByID(id);
+
+		return getApplicationStatus;
+	});
 };

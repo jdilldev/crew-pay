@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View as DefaultView,
@@ -66,14 +66,19 @@ export function Text(props: TextProps) {
   const color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
   const fontSize = FontSize[size]
 
-  const { style, onPress, children, ...otherProps } = rest
+  const { style, onPress, children, textAlign, fontWeight, fontStyle, marginTop, marginBottom, ...otherProps } = rest
   return <DefaultText
+
     style={[{
       color,
+      textAlign,
       fontSize,
-      marginTop: spacing ? 5 : 0,
-      marginBottom: spacing ? 5 : 0,
-    }, style, otherProps]}
+      fontStyle,
+      fontWeight,
+      marginTop: marginTop ? marginTop : spacing ? 5 : 0,
+      marginBottom: marginBottom ? marginBottom : spacing ? 5 : 0,
+    }, style]}
+    {...otherProps}
     onPress={onPress}
     children={children}
   />;
@@ -86,6 +91,7 @@ export function TextInput(props: TextInputProps) {
     ...rest } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text')
   const { style, ...otherProps } = rest
+
   return <DefaultTextInput
     placeholderTextColor={color}
     style={[{
@@ -107,7 +113,7 @@ export function View(props: ViewProps) {
     darkColor,
     wrap = false,
     spacing = false,
-    transparent,
+    transparent = false,
     ...otherProps } = props;
   const backgroundColor = transparent ? 'transparent' : useThemeColor({ light: lightColor, dark: darkColor }, 'background')
 
@@ -203,10 +209,9 @@ export const Button = ({
       onPressOut={() => setPressing(false)}
       style={[{
         opacity: otherProps.disabled ? .4 : pressing ? .8 : 1,
-        paddingHorizontal: 30,
+        paddingHorizontal: 15,
         width: fullWidth ? '100%' : 'auto',
-        display: 'flex',
-        flexDirection: icon ? (iconPosition === 'start' ? 'row' : 'row-reverse') : 'column',
+        flexDirection: icon ? (iconPosition === 'start' ? 'row' : 'row-reverse') : 'row',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: buttonBackgroundColor,
@@ -215,24 +220,41 @@ export const Button = ({
         borderRadius: Shape[shape],
       }, style]} >
       {icon && <Vector {...icon} color={buttonTextColor} />}
-      <Text
-        marginLeft={3}
-        fontWeight={weight}
-        type={type}
-        customColor={buttonTextColor}
-        size={size}>{text}
-      </Text>
+      <View orientation='row' marginLeft={icon ? 5 : 0} transparent>
+        <Text
+          fontSize={10}
+          numberOfLines={1}
+          fontWeight={weight}
+          type={type}
+          customColor={buttonTextColor}
+          size={size}>
+          {text}
+        </Text>
+      </View>
+
     </Pressable>
   )
 }
 
-export const ButtonGroup = ({ buttons, otherProps }: { buttons: string[], otherProps?: ButtonProps }) => {
+export const ButtonGroup = ({ buttons, updateValue, otherProps }: { buttons: string[], updateValue: (value: string) => void, otherProps?: ButtonProps }) => {
   const [selected, setSelected] = useState(0)
   const borderColor = useThemeColor({}, 'primary')
 
   return <View orientation='row' justify='center' borderColor={borderColor} borderWidth={1} width={DEVICE_WIDTH}>
     {buttons.map((buttonText, index) =>
-      <Button type='primary' key={buttonText} outlined={selected !== index} size='smallButton' shape={'square'} style={{ width: (DEVICE_WIDTH) / (buttons.length), borderColor: 'transparent', marginHorizontal: -1 }} onPress={() => { setSelected(index) }} text={buttonText} {...otherProps}></Button>
+      <Button
+        type='primary'
+        key={buttonText}
+        outlined={selected !== index}
+        size='smallButton'
+        shape={'square'}
+        style={{ width: (DEVICE_WIDTH) / (buttons.length), borderColor: 'transparent', marginHorizontal: -1 }}
+        onPress={() => {
+          setSelected(index)
+          updateValue(buttons[index])
+        }}
+        text={buttonText}
+        {...otherProps}></Button>
     )}
   </View >
 }
@@ -263,6 +285,35 @@ export const IconInput = ({ icon, pack, placeholder, type }: { icon: IconTypes, 
   </View>
 )
 
+export const TagInput = ({ updateValue }: { updateValue: ((newVal: string[]) => void) }) => {
+  const [currentTag, setCurrentTag] = useState('')
+  const [tags, setTags] = useState<string[]>([])
+
+  useEffect(() => {
+    updateValue([...tags])
+  }, [tags])
+  return <View orientation='row' >
+    <TextInput
+
+      style={{ marginRight: 5 }}
+      placeholder={tags.length > 0 ? '' : 'Enter name, phone, or email'}
+      value={currentTag}
+      onSubmitEditing={e => {
+        setTags([...tags, currentTag])
+        setCurrentTag('')
+      }}
+      onChangeText={setCurrentTag} />
+    {tags.map((tag, index) =>
+      <View orientation='row' alignItems='center' justifyContent='center' style={{ marginRight: 5, borderRadius: 15, borderWidth: 1, backgroundColor: '#0058886a', paddingHorizontal: 5 }} >
+        <Text fontWeight='bold' fontSize={14} key={`${tag}-${index}`} marginRight={5}>{tag}</Text>
+        <Vector name={'close'} width={9} height={9} onPress={() => {
+          const tmpArr = tags
+          tmpArr.splice(index, 1)
+          setTags([...tmpArr])
+        }} />
+      </View>)}
+  </View>
+}
 
 
 
@@ -425,7 +476,7 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
           data={COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))}
           ListEmptyComponent={<Text align="center">No supported countries</Text>}
           ItemSeparatorComponent={() => <View borderBottomColor={'white'} borderWidth={1} marginTop={2} />}
-          renderItem={({ item, index, separators }) => {
+          renderItem={({ group: item, index, separators }) => {
             const filteredCountries = COUNTRY_DATA.filter(item => item.title.toLowerCase().includes(countrySearch.toLowerCase()))
             return <Pressable
               onPressIn={() => setPreSelectedCountry(item.title)}

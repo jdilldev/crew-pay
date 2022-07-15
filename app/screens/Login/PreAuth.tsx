@@ -10,15 +10,15 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
 
     return (
         <View flex={1} paddingHorizontal={20}>
-            <View flex={2}>
+            <View flex={1.5}>
                 <LottieView
                     autoPlay
                     loop
                     source={require('../../assets/lotties/floating-moneybag.json')}
                 />
             </View>
-            <View flex={1} justify='center' align="center" >
-                <Text size='large' fontWeight="bold" spacing={false} marginTop={-80}>Oh you look <Text fontWeight="200" size="large" fontStyle="italic">good</Text> when you stack that <Text size="large" customColor="green">cash</Text> up.</Text>
+            <View flex={.3} justify='center' align="center" >
+                <Text size='large' fontWeight="bold" spacing={false} marginTop={-80} >Oh you look <Text fontWeight="200" size="large" fontStyle="italic">good</Text> when you stack that <Text size="large" customColor="green">cash</Text> up.</Text>
                 <Text
                     fontWeight="300"
                     textAlign="center">The modern way to spend money and split costs in a group.
@@ -53,14 +53,14 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     }} />
 
 
-                <View>
+                <View flex={.5}>
                     <View orientation="row" width={'100%'} alignItems='center' justifyContent="center" spacing={true}>
-                        <View orientation="row" flex={.3} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
-                        <Text flex={1} numberOfLines={1} textAlign="center" spacing={false}>Or connect to Google account</Text>
-                        <View orientation="row" flex={.3} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
+                        <View orientation="row" flex={.2} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
+                        <Text flex={1} numberOfLines={1} textAlign="center" spacing={false}> Or connect Google account  </Text>
+                        <View orientation="row" flex={.2} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
                     </View>
                     <Image
-                        style={{ alignSelf: 'center', width: 20, height: 20, marginRight: 5, }}
+                        style={{ alignSelf: 'center', width: 25, height: 25, marginRight: 5, }}
                         source={require('../../assets/images/vector/google.png')} />
                 </View>
             </View>
