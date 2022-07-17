@@ -35,8 +35,8 @@ export default class Group extends Realm.Object {
 			owner: initialUser,
 			description,
 			usageType,
-			invitees: [...invitees],
-			members: [initialUser],
+			invitees: [...invitees, initialUser],
+			members: [],
 			//card: new Card(),
 			createdAt: new Date(),
 		};

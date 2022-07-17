@@ -23,7 +23,8 @@ const GroupScreen = () => {
             try {
                 realm.write(() => {
                     const newGroup = realm.create<Group>("Group", Group.generate({ name, description, initialUser: currentUserID, invitees, usageType: type }))
-                    currentUser.addGroup(newGroup._id.toHexString())
+
+                    currentUser.pendingGroups.push(newGroup._id.toHexString())
                 });
                 setOpen(false)
             }
@@ -69,7 +70,7 @@ const GroupScreen = () => {
                     <Field value={description} setValue={setDescription} fieldType='text' label='Description' noStyle />
                     <Field value={groupType} setValue={setGroupType} fieldType='button-group' buttons={['shared', 'unilateral']} label='Card Usage' noStyle />
                     <View width={'100%'} orientation='row' justifyContent='space-around' >
-                        <Button type='primary' weight='300' size="smallButton" text='Create Group' disabled={isGroupButtonDisabled()} onPress={() => onSaveGroup(groupName, description, groupMembers, groupType)} />
+                        <Button type='primary' weight='normal' size="smallButton" text='Create Group' disabled={isGroupButtonDisabled()} onPress={() => onSaveGroup(groupName, description, groupMembers, groupType)} />
                     </View>
                     <View flex={1} marginTop={5} borderRadius={10} backgroundColor={'palegreen'}>
                         <Text textAlign='center'>Suggested</Text>
@@ -92,8 +93,17 @@ const GroupScreen = () => {
                 {
                     currentUser.pendingGroups.length > 0 &&
                     <View borderWidth={1} borderColor={'green'} >
-                        <Text size='small' type='primary'>INVITES</Text>
-
+                        <Text size='small' type='primary'>PENDING</Text>
+                        <FlatList
+                            data={groups.filter(({ _id }) => currentUser.pendingGroups.indexOf(_id.toHexString()) !== -1)}
+                            keyExtractor={task => task._id.toString()}
+                            renderItem={({ item }) => {
+                                return <View spacing={true}>
+                                    <Text spacing={false}>{item.name}</Text>
+                                    <Text spacing={false} type={'secondary'} size='small'>{`${item.owner === currentUserID ? 'Waiting for at least one other person to join the group' : 'Accept the invitation to joing the group'}`}</Text>
+                                </View>
+                            }}
+                        />
                     </View>
                 }
                 <View flex={1}>
@@ -103,7 +113,9 @@ const GroupScreen = () => {
                         keyExtractor={task => task._id.toString()}
                         ListEmptyComponent={() =>
                             <View marginTop={'50%'} justifyContent='center' alignItems='center'>
-                                <Text type='warning' fontWeight='300'>No groups, click icon to create a group</Text>
+                                <Text size='medium' textAlign='center' type='warning' fontWeight='300'>
+                                    {`No active groups, click the icon to create a group${currentUser.pendingGroups.length > 0 ? ', or accept a group invitation' : ''}`}
+                                </Text>
                             </View>
                         }
                         renderItem={({ item }) => {
