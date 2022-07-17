@@ -27,3 +27,4 @@ export const COUNTRY_DATA = [
 
 export const DEVICE_WIDTH = Dimensions.get("window").width;
 export const DEVICE_HEIGHT = Dimensions.get("window").height;
+export const MAX_CHARS_GROUP_NAME = 26

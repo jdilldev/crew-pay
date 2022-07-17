@@ -32,6 +32,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getSVG } from '../constants/SvgIcons';
 import validator from 'validator';
 import useColorScheme from '../hooks/useColorScheme';
+import { capitalize } from '../utils';
 
 const FontSize = {
   'small': 12,
@@ -253,7 +254,7 @@ export const ButtonGroup = ({ buttons, updateValue, otherProps }: { buttons: str
           setSelected(index)
           updateValue(buttons[index])
         }}
-        text={buttonText}
+        text={capitalize(buttonText)}
         {...otherProps}></Button>
     )}
   </View >
@@ -294,7 +295,6 @@ export const TagInput = ({ updateValue }: { updateValue: ((newVal: string[]) => 
   }, [tags])
   return <View orientation='row' >
     <TextInput
-
       style={{ marginRight: 5 }}
       placeholder={tags.length > 0 ? '' : 'Enter name, phone, or email'}
       value={currentTag}
@@ -304,8 +304,8 @@ export const TagInput = ({ updateValue }: { updateValue: ((newVal: string[]) => 
       }}
       onChangeText={setCurrentTag} />
     {tags.map((tag, index) =>
-      <View orientation='row' alignItems='center' justifyContent='center' style={{ marginRight: 5, borderRadius: 15, borderWidth: 1, backgroundColor: '#0058886a', paddingHorizontal: 5 }} >
-        <Text fontWeight='bold' fontSize={14} key={`${tag}-${index}`} marginRight={5}>{tag}</Text>
+      <View key={`${tag}-${index}`} orientation='row' alignItems='center' justifyContent='center' style={{ marginRight: 5, borderRadius: 15, borderWidth: 1, backgroundColor: '#0058886a', paddingHorizontal: 5 }} >
+        <Text fontWeight='bold' fontSize={14} marginRight={5}>{tag}</Text>
         <Vector name={'close'} width={9} height={9} onPress={() => {
           const tmpArr = tags
           tmpArr.splice(index, 1)
@@ -377,11 +377,6 @@ export const PhoneValidationInput = () => {
       updateVisibility={(val: boolean) => setCountryPickerVisibility(val)}
     />
   </View>
-}
-
-export const isValidEmail = (emailAddress: string) => {
-  const re = /\S+@\S+\.\S+/;
-  return (re.test(emailAddress) && validator.isEmail(emailAddress)) ? true : false
 }
 
 export const EmailValidationInput = () => {

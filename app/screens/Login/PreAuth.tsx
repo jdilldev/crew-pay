@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Image, Pressable } from "react-native"
 import LottieView from 'lottie-react-native';
 import { View, Text, Button } from '../../styles/styles';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Image, KeyboardAvoidingView, Platform } from "react-native"
-import { View, Text, Button, PhoneValidationInput, EmailValidationInput, isValidEmail, } from "../../styles/styles";
+import { View, Text, Button, PhoneValidationInput, EmailValidationInput, } from "../../styles/styles";
 import {
     isValidPhoneNumber,
 } from 'libphonenumber-js'
@@ -9,6 +9,7 @@ import { LoginType, RootStackScreenProps } from "../../types";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../../constants/Constants'
 import { useStytchEmail, useStytchSMS } from "../../hooks/useStytch";
 import { useStore } from '../../GlobalUserSettingsContext'
+import { isValidEmail } from "../../utils";
 
 
 const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {

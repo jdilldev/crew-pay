@@ -105,7 +105,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
         }
 
         try {
-            const { createApplication: { id, userStatus, documents, createdAt } } = await useCreateApplication({
+            const { createApplication: { id, userStatus, documents, createdAt, error } } = await useCreateApplication({
                 firstName,
                 lastName,
                 countryCallingCode: getCountryCallingCode(region),
@@ -121,12 +121,16 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
                 nationality: region
             })
 
-            updateStatus(userStatus)
-            realm.write(() => {
-                if (currentUser)
-                    currentUser.applicationID = id
-            })
+            if (error) {
+                console.log('error error, show error message')
 
+            } else {
+                updateStatus(userStatus)
+                realm.write(() => {
+                    if (currentUser)
+                        currentUser.applicationID = id
+                })
+            }
         } catch (err) {
             console.log('Error submitting application to Unit ' + err)
         }

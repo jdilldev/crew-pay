@@ -11,8 +11,10 @@ import {
 	isPossiblePhoneNumber,
 	validatePhoneNumberLength,
 } from "libphonenumber-js";
-import { isValidEmail } from "./styles/styles";
 
+export const capitalize = (str: string) => {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+};
 export const phoneValidation = (phone: string, region: CountryCode): string => {
 	try {
 		parsePhoneNumberWithError(phone, region);
@@ -28,6 +30,13 @@ export const phoneValidation = (phone: string, region: CountryCode): string => {
 
 		return parseError;
 	}
+};
+
+export const isValidEmail = (emailAddress: string) => {
+	const re = /\S+@\S+\.\S+/;
+	return re.test(emailAddress) && validator.isEmail(emailAddress)
+		? true
+		: false;
 };
 
 export const emailValidation = (email: string) => {

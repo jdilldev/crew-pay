@@ -7,7 +7,8 @@ import { useAuthenticatedStore } from '../../GlobalUserSettingsContext';
 const { useRealm, useQuery, useObject } = RealmContext
 import WaitImage from '../../assets/svgs/frightened.svg'
 import { Field } from '../../components/Field';
-import { List } from 'realm';
+import { capitalize } from '../../utils'
+import { MAX_CHARS_GROUP_NAME } from '../../constants/Constants';
 
 type GroupUsageType = 'unilateral' | 'shared'
 const GroupScreen = () => {
@@ -40,6 +41,11 @@ const GroupScreen = () => {
         const [groupType, setGroupType] = useState('shared')
 
 
+        const isGroupButtonDisabled = () => {
+            return false
+            // return groupName === '' || groupName.length > MAX_CHARS_GROUP_NAME || groupMembers.length < 2 || description === ''
+        }
+
         return <Modal
             animationType="slide"
             transparent={false}
@@ -58,12 +64,12 @@ const GroupScreen = () => {
                             style={{ width: 100, height: 100 }}
                             source={{ uri: `https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png` }} />
                     </View>
-                    <Field value={groupName} setValue={setGroupName} fieldType='text' label='Name' noStyle />
+                    <Field value={groupName} setValue={setGroupName} fieldType='text' label='Name' noStyle maxChars={MAX_CHARS_GROUP_NAME} />
                     <Field value={groupMembers} setValue={setGroupMembers} fieldType='tag-input' label='Invite' noStyle />
                     <Field value={description} setValue={setDescription} fieldType='text' label='Description' noStyle />
-                    <Field value={groupType} setValue={setGroupType} fieldType='button-group' buttons={['Shared', 'Unilateral']} label='Card Usage' noStyle />
+                    <Field value={groupType} setValue={setGroupType} fieldType='button-group' buttons={['shared', 'unilateral']} label='Card Usage' noStyle />
                     <View width={'100%'} orientation='row' justifyContent='space-around' >
-                        <Button type='primary' weight='300' size="smallButton" text='Create Group' disabled={groupName === '' || groupMembers.length < 2} onPress={() => onSaveGroup(groupName, description, groupMembers, groupType)} />
+                        <Button type='primary' weight='300' size="smallButton" text='Create Group' disabled={isGroupButtonDisabled()} onPress={() => onSaveGroup(groupName, description, groupMembers, groupType)} />
                     </View>
                     <View flex={1} marginTop={5} borderRadius={10} backgroundColor={'palegreen'}>
                         <Text textAlign='center'>Suggested</Text>
@@ -75,6 +81,7 @@ const GroupScreen = () => {
 
 
     if (currentUserID && currentUser) {
+        console.log(groups.filter(({ _id }) => currentUser.pendingGroups.indexOf(_id.toHexString()) !== -1))
         const GroupList = () => {
             return <View flex={1} margin={10}>
                 <View orientation='row' justifyContent='flex-end' spacing={true}>
@@ -86,28 +93,36 @@ const GroupScreen = () => {
                     currentUser.pendingGroups.length > 0 &&
                     <View borderWidth={1} borderColor={'green'} >
                         <Text size='small' type='primary'>INVITES</Text>
+
                     </View>
                 }
                 <View flex={1}>
                     <Text size='small' type='primary'>GROUPS</Text>
                     <FlatList
-                        data={groups}
+                        data={groups.filter(({ _id }) => currentUser.pendingGroups.indexOf(_id.toHexString()) === -1)}
                         keyExtractor={task => task._id.toString()}
+                        ListEmptyComponent={() =>
+                            <View marginTop={'50%'} justifyContent='center' alignItems='center'>
+                                <Text type='warning' fontWeight='300'>No groups, click icon to create a group</Text>
+                            </View>
+                        }
                         renderItem={({ item }) => {
                             return <View borderColor={'gray'}>
                                 <View orientation='row' alignItems='center' justifyContent='space-between' spacing={false}>
                                     <View orientation='row' alignItems='center'>
                                         <Text size='medium' fontWeight='normal' spacing={false}>{item.name}</Text>
-                                        <Text marginTop={3} type='success' spacing={false}>{` ${300.00}`}</Text>
                                     </View>
-                                    <View orientation='column' justifyContent='center'>
-                                        <Button weight={'300'} type='primary' outlined size='smallButton' text='Use Card' onPress={() => console.log('using card modals')} />
-                                    </View>
+                                    {(item.usageType === 'shared' || (item.owner === currentUserID)) &&
+                                        <View orientation='column' justifyContent='center'>
+                                            <Button weight={'300'} type='primary' outlined size='smallButton' text='Use Card' onPress={() => console.log('using card modals')} />
+                                        </View>
+                                    }
                                     {/*     <Text>{item.description}</Text> */}
                                 </View>
                                 <View marginLeft={10}>
-                                    <Text fontWeight='300' size='default' type='default' spacing={false}>{`${item.usageType} Card ${item.usageType === 'unilateral' ? ' | Group Leader:' + item.owner : ''}`}</Text>
-                                    <Text fontWeight='300' size='default' type='secondary' spacing={false}>{item.description || 'placeholder description'}</Text>
+                                    <Text marginTop={3} type='success' spacing={false}>{`Available Funds: ${300.00}`}</Text>
+                                    <Text textTransform='capitalize' fontWeight='300' size='default' type='secondary' spacing={false}>{`${capitalize(item.usageType)} Card ${item.usageType === 'unilateral' ? ' | Group Leader:' + item.owner : ''}`}</Text>
+                                    <Text fontWeight='300' size='default' type='default' spacing={false}>{item.description || 'placeholder description'}</Text>
                                     <Text>{item.members?.join(' | ')}</Text>
                                 </View>
                             </View>

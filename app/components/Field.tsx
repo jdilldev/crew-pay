@@ -12,7 +12,7 @@ import {
     isPossiblePhoneNumber,
     validatePhoneNumberLength,
 } from 'libphonenumber-js'
-import { isValidEmail, Vector, View, TextInput, Text, ButtonGroup, TagInput } from '../styles/styles';
+import { Vector, View, TextInput, Text, ButtonGroup, TagInput } from '../styles/styles';
 import { useThemeColor } from '../types';
 import { emailValidation, phoneValidation, postalCodeValidation } from '../utils';
 
@@ -22,6 +22,7 @@ type ArrayFieldProps = {
     setValue: ((newVal: string[]) => void)
     region?: never
     subType?: never
+    maxChars?: never
 }
 
 type CommonFieldProps = {
@@ -31,6 +32,7 @@ type CommonFieldProps = {
     icon?: string,
     width?: string
     buttons?: string[]
+    maxChars?: number
 }
 
 type NonRegionalFieldProps = {
@@ -53,7 +55,7 @@ type FieldProps = CommonFieldProps & (RegionalFieldProps | NonRegionalFieldProps
 
 
 
-export const Field = ({ value, setValue, fieldType, icon, label, width, region, buttons, subType, readonly = false, noStyle = false }: FieldProps) => {
+export const Field = ({ value, setValue, fieldType, icon, label, width, region, buttons, subType, maxChars, readonly = false, noStyle = false }: FieldProps) => {
     const [isFocused, setIsFocused] = useState(false)
     const [datePickerOpen, setDatePickerOpen] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
@@ -138,11 +140,16 @@ export const Field = ({ value, setValue, fieldType, icon, label, width, region, 
                 editable={!readonly}
                 selectTextOnFocus
                 style={{ fontSize: 17 }}
+                maxLength={maxChars ? maxChars + 1 : undefined}
                 value={text}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 onChangeText={(e) => {
                     setValue(e);
+                    if (maxChars && e.length > maxChars)
+                        setErrorMessage('Too many characters')
+                    else
+                        setErrorMessage('')
                 }}
             />
             break;
