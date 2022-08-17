@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { ButtonGroup, Vector, Text, View } from '../../../styles/styles'
+import { ButtonGroup, Vector, Text, View, Button } from '../../../styles/styles'
 import { SectionList, Image, Switch, Pressable, } from 'react-native'
 import { IconPacks, IconTypes } from '../../../types';
 import Application from './Application';
@@ -12,6 +12,7 @@ import RealmContext, { User } from '../../../database';
 const { useObject } = RealmContext
 import { useAuthenticatedStore } from '../../../GlobalUserSettingsContext';
 import { useGetApplicationByID } from '../../../hooks/useUnit';
+import { useUser } from '@realm/react';
 
 type CommonProps = {
     icon: IconTypes,
@@ -48,14 +49,13 @@ const DATA: ProfileProps[] = [
         data: [{ icon: 'ios-card-outline', pack: 'ion', name: 'Transactions', toggle: true, subText: 'These will always be visible in your activity feed' }, { icon: 'people', pack: 'simple', name: 'Group Changes', toggle: true, subText: 'When a new person joins or leaves' }]
     },
     {
-        title: "Security",
+        title: "Authentication Method",
         data: [{ icon: 'ios-card-outline', pack: 'ion', name: 'Authentication Method', toggle: true }]
     },
     {
         title: "Questions",
         data: [{ icon: 'ios-card-outline', pack: 'ion', name: 'Contact Support', component: <Text>Idolize</Text> }]
-    }
-
+    },
 ];
 
 
@@ -93,6 +93,7 @@ export const applicationStatus: { [name: string]: { text: string, icon: string, 
 
 const ProfileDetails = () => {
     const { currentUserID } = useAuthenticatedStore()
+    const user = useUser()
     const currentUser = currentUserID ? useObject(User, currentUserID) : null
     const applicationID = currentUser ? currentUser.applicationID : null
     const [openModal, setOpenModal] = useState(!applicationID)
@@ -130,7 +131,7 @@ const ProfileDetails = () => {
             </Pressable>
         </View>
         <SectionList
-            style={{ marginLeft: 20 }}
+            contentContainerStyle={{ paddingHorizontal: 15 }}
             sections={DATA}
             keyExtractor={({ name, }, index) => name + index}
             renderItem={({ item: { icon, pack, name, toggle, component, subText }, index }: { item: ItemProps, index: number }) =>
@@ -140,8 +141,15 @@ const ProfileDetails = () => {
             renderSectionHeader={({ section: { title } }) => (
                 <Text size='small' fontWeight='bold' textTransform='uppercase'>{title}</Text>
             )}
+            ListFooterComponent={() =>
+                <View style={{ padding: 10, }}>
+                    <Button outlined fullWidth style={{ marginBottom: 10, alignSelf: 'center' }} size='smallButton' shape='rounded' text='Sign Out' onPress={() => user?.logOut()} />
+                    <Button fullWidth outlined style={{ marginBottom: 10, alignSelf: 'center' }} type='error' size='smallButton' shape='rounded' text='Delete Account' onPress={() => user?.logOut} />
+                    <Button fullWidth style={{ alignSelf: 'center' }} type='error' size='smallButton' shape='rounded' text='Wipe Account (GDPR Compliant)' onPress={() => user?.logOut} />
+                </View>}
         />
         <Application region={country} openFromProfile={openModal} setOpenFromProfile={setOpenModal} status={status} updateStatus={setStatus} />
+
     </View>
         : <Text>No data</Text>
 }

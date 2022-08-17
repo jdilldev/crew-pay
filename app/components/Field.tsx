@@ -23,6 +23,7 @@ type ArrayFieldProps = {
     region?: never
     subType?: never
     maxChars?: never
+    multiline?: never
 }
 
 type CommonFieldProps = {
@@ -38,6 +39,7 @@ type CommonFieldProps = {
 type NonRegionalFieldProps = {
     value: string,
     setValue: (newVal: string) => void | ((_: any) => void),
+    multiline?: boolean,
     fieldType: 'email' | 'text' | 'number' | 'ssn' | 'birthday' | 'button-group'
     region?: never
     subType?: 'name' | 'familyName' | 'addressCity'
@@ -49,13 +51,14 @@ type RegionalFieldProps = {
     fieldType: 'phone' | 'street' | 'postal-code' | 'passport'
     region: CountryCode,
     subType?: never
+    multiline?: never
 }
 
 type FieldProps = CommonFieldProps & (RegionalFieldProps | NonRegionalFieldProps | ArrayFieldProps)
 
 
 
-export const Field = ({ value, setValue, fieldType, icon, label, width, region, buttons, subType, maxChars, readonly = false, noStyle = false }: FieldProps) => {
+export const Field = ({ value, setValue, fieldType, icon, label, width, region, buttons, subType, maxChars, multiline, readonly = false, noStyle = false }: FieldProps) => {
     const [isFocused, setIsFocused] = useState(false)
     const [datePickerOpen, setDatePickerOpen] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
@@ -140,6 +143,8 @@ export const Field = ({ value, setValue, fieldType, icon, label, width, region, 
                 editable={!readonly}
                 selectTextOnFocus
                 style={{ fontSize: 17 }}
+                multiline={multiline}
+                numberOfLines={multiline ? 2 : 1}
                 maxLength={maxChars ? maxChars + 1 : undefined}
                 value={text}
                 onFocus={() => setIsFocused(true)}

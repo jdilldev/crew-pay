@@ -50,7 +50,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
         </View>
         <View flex={1} padding={10}>
             <Text size="medium" fontWeight="bold">Choose login method</Text>
-            <Text fontWeight="300" size='default' spacing={false}>We will send a one-time, 4-digit passcode to make sure it is really you.</Text>
+            <Text fontWeight="300" size='default' spacing={false}>We will send a one-time, 6-digit passcode to make sure it is really you.</Text>
             {error ?
                 <Text type="error">{error}</Text> : null
             }

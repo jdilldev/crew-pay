@@ -13,7 +13,9 @@
       "supportsTablet": true,
       "userInterfaceStyle": "automatic",
       "infoPlist": {
-        "UIUserInterfaceStyle": "Automatic"
+        "CFBundleAllowMixedLocalizations": true,
+        "UIUserInterfaceStyle": "Automatic",
+        "NSFaceIDUsageDescription": "Stack uses Face ID/Touch ID to authenticate and approve requests to use group debit cards"
       }
     },
     "orientation": "portrait",

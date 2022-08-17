@@ -68,14 +68,7 @@ const Dashboard = () => {
                         backgroundColor
                     },
                     tabBarLabelStyle: { fontSize: 12 },
-                    headerRight: () => (
-                        <Pressable
-                            style={{ padding: 10 }}
-                            onPress={() => user?.logOut()}
-                        >
-                            <LogoutIcon fill={'black'} width={30} height={30} />
-                        </Pressable>
-                    ),
+
                     tabBarActiveTintColor: primaryColor,
                     tabBarInactiveTintColor: 'gray',
                 })}>

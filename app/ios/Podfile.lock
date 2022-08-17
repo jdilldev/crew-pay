@@ -10,6 +10,8 @@ PODS:
   - EXFont (10.1.0):
     - ExpoModulesCore
   - EXJSONUtils (0.3.0)
+  - EXLocalAuthentication (12.2.0):
+    - ExpoModulesCore
   - EXManifests (0.3.0):
     - EXJSONUtils
   - Expo (45.0.5):
@@ -418,6 +420,7 @@ DEPENDENCIES:
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
+  - EXLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - EXManifests (from `../node_modules/expo-manifests/ios`)
   - Expo (from `../node_modules/expo/ios`)
   - expo-dev-client (from `../node_modules/expo-dev-client/ios`)
@@ -491,6 +494,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-font/ios"
   EXJSONUtils:
     :path: "../node_modules/expo-json-utils/ios"
+  EXLocalAuthentication:
+    :path: "../node_modules/expo-local-authentication/ios"
   EXManifests:
     :path: "../node_modules/expo-manifests/ios"
   Expo:
@@ -598,6 +603,7 @@ SPEC CHECKSUMS:
   EXFileSystem: 2aa2d9289f84bca9532b9ccbd81504fa31eb1ded
   EXFont: 04235cc22e6fef86028feb67db452978dc6f240f
   EXJSONUtils: 2a74b8f40f1523cc3f92af99c91aa78201737a77
+  EXLocalAuthentication: 7f37b242eae73f9acf111d39bdee3f1379e68902
   EXManifests: 0c6134b7b6f3236a93a778c3f44ba1cfb3f9fa3d
   Expo: b9fff0a1eac0f424fc68ea49b4347fb308e52e17
   expo-dev-client: 658fa86a3498812778d6c706205677c8e0674b9f

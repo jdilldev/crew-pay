@@ -55,6 +55,11 @@ const TextWeight = {
 const DEVICE_WIDTH = Dimensions.get('window').width - 60;
 
 
+export const Divider = () => {
+  const color = useThemeColor({}, 'border')
+  return <View opacity={.8} borderBottomColor={color} borderBottomWidth={1} />
+}
+
 export function Text(props: TextProps) {
   const {
     spacing = true,
@@ -67,7 +72,7 @@ export function Text(props: TextProps) {
   const color = customColor ? customColor : useThemeColor({ light: lightColor, dark: darkColor }, type)
   const fontSize = FontSize[size]
 
-  const { style, onPress, children, textAlign, fontWeight, fontStyle, marginTop, marginBottom, ...otherProps } = rest
+  const { style, backgroundColor, onPress, children, textAlign, fontWeight, fontStyle, paddingLeft, marginLeft, marginTop, marginBottom, ...otherProps } = rest
   return <DefaultText
 
     style={[{
@@ -76,6 +81,10 @@ export function Text(props: TextProps) {
       fontSize,
       fontStyle,
       fontWeight,
+      backgroundColor,
+      padding: backgroundColor ? 5 : 0,
+      paddingLeft,
+      marginLeft,
       marginTop: marginTop ? marginTop : spacing ? 5 : 0,
       marginBottom: marginBottom ? marginBottom : spacing ? 5 : 0,
     }, style]}
@@ -295,6 +304,7 @@ export const TagInput = ({ updateValue }: { updateValue: ((newVal: string[]) => 
   }, [tags])
   return <View orientation='row' >
     <TextInput
+      autoCapitalize={'none'}
       style={{ marginRight: 5 }}
       placeholder={tags.length > 0 ? '' : 'Enter name, phone, or email'}
       value={currentTag}
