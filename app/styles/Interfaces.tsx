@@ -11,9 +11,6 @@ export interface TextThemeProps {
 }
 
 export interface ViewThemeProps {
-    orientation?: 'row' | 'column'
-    align?: 'center' | 'left' | 'right'
-    justify?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
     flex?: number,
     spacing?: boolean
     wrap?: boolean
@@ -21,7 +18,6 @@ export interface ViewThemeProps {
 }
 
 interface IconBasics {
-
     color?: string,
     style?: ViewStyle
     pressable?: boolean,

@@ -50,11 +50,11 @@ const AuthPasscode = ({ route, navigation }: RootStackScreenProps<'AuthPasscode'
             <Vector name='one-time-password' width={'100%'} height={'100%'} />
         </View>
         <View flex={1} >
-            <View justify='center' align='center'>
+            <View justifyContent='center' alignItems='center'>
                 <Text spacing={false}>{'A six-digit code was sent to you at'}</Text>
                 <Text>{authType === LoginType.PHONE ? parsePhoneNumber(userPhone, countryCode)?.formatInternational() : userEmail}</Text>
             </View>
-            <View style={{ width: '90%', alignSelf: 'center' }} orientation='row' justify='space-between' spacing={true}>
+            <View style={{ width: '90%', alignSelf: 'center' }} flexDirection='row' justifyContent='space-between' spacing={true}>
                 <TextInput
                     maxLength={6}
                     keyboardType='numeric'

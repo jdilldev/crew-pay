@@ -17,14 +17,14 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
                     source={require('../../assets/lotties/floating-moneybag.json')}
                 />
             </View>
-            <View flex={.3} justify='center' align="center" >
+            <View flex={.3} justifyContent='center' alignItems="center" >
                 <Text size='large' fontWeight="bold" spacing={false} marginTop={-80} >Oh you look <Text fontWeight="200" size="large" fontStyle="italic">good</Text> when you stack that <Text size="large" customColor="green">cash</Text> up.</Text>
                 <Text
                     fontWeight="300"
                     textAlign="center">The modern way to spend money and split costs in a group.
                 </Text>
             </View>
-            <View flex={1} orientation='column' justify="space-evenly" paddingBottom={30} >
+            <View flex={1} flexDirection='column' justifyContent="space-evenly" paddingBottom={30} >
                 <Button
                     type='primary'
                     shape='oval'
@@ -54,10 +54,10 @@ const Login = ({ navigation }: RootStackScreenProps<'Login'>) => {
 
 
                 <View flex={.5}>
-                    <View orientation="row" width={'100%'} alignItems='center' justifyContent="center" spacing={true}>
-                        <View orientation="row" flex={.2} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
+                    <View flexDirection="row" width={'100%'} alignItems='center' justifyContent="center" spacing={true}>
+                        <View flexDirection="row" flex={.2} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
                         <Text flex={1} numberOfLines={1} textAlign="center" spacing={false}> Or connect Google account  </Text>
-                        <View orientation="row" flex={.2} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
+                        <View flexDirection="row" flex={.2} alignSelf="center" borderBottomWidth={1} borderBottomColor='black' />
                     </View>
                     <Image
                         style={{ alignSelf: 'center', width: 25, height: 25, marginRight: 5, }}

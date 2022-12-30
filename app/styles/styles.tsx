@@ -74,7 +74,6 @@ export function Text(props: TextProps) {
 
   const { style, backgroundColor, onPress, children, textAlign, fontWeight, fontStyle, paddingLeft, marginLeft, marginTop, marginBottom, ...otherProps } = rest
   return <DefaultText
-
     style={[{
       color,
       textAlign,
@@ -115,9 +114,6 @@ export function TextInput(props: TextInputProps) {
 export function View(props: ViewProps) {
   const {
     flex,
-    orientation,
-    align,
-    justify,
     style,
     lightColor,
     darkColor,
@@ -130,13 +126,10 @@ export function View(props: ViewProps) {
   return <DefaultView style={
     [{
       display: 'flex',
-      flexDirection: orientation,
       flexWrap: wrap ? 'wrap' : 'nowrap',
-      alignItems: align as FlexAlignType,
-      justifyContent: justify,
       marginTop: spacing ? 5 : 0,
       marginBottom: spacing ? 5 : 0,
-      // justifyContent: orientation === 'column' ? align : 'flex-start',
+      // justifyContent: flexDirection === 'column' ? alignItems : 'flex-start',
       backgroundColor,
       flex
     }, style]} {...otherProps} />;
@@ -230,7 +223,7 @@ export const Button = ({
         borderRadius: Shape[shape],
       }, style]} >
       {icon && <Vector {...icon} color={buttonTextColor} />}
-      <View orientation='row' marginLeft={icon ? 5 : 0} transparent>
+      <View flexDirection='row' marginLeft={icon ? 5 : 0} transparent>
         <Text
           fontSize={10}
           numberOfLines={1}
@@ -250,7 +243,7 @@ export const ButtonGroup = ({ buttons, updateValue, otherProps }: { buttons: str
   const [selected, setSelected] = useState(0)
   const borderColor = useThemeColor({}, 'primary')
 
-  return <View orientation='row' justify='center' borderColor={borderColor} borderWidth={1} width={DEVICE_WIDTH}>
+  return <View flexDirection='row' justifyContent='center' borderColor={borderColor} borderWidth={1} width={DEVICE_WIDTH}>
     {buttons.map((buttonText, index) =>
       <Button
         type='primary'
@@ -302,7 +295,7 @@ export const TagInput = ({ updateValue }: { updateValue: ((newVal: string[]) => 
   useEffect(() => {
     updateValue([...tags])
   }, [tags])
-  return <View orientation='row' >
+  return <View flexDirection='row' >
     <TextInput
       autoCapitalize={'none'}
       style={{ marginRight: 5 }}
@@ -314,7 +307,7 @@ export const TagInput = ({ updateValue }: { updateValue: ((newVal: string[]) => 
       }}
       onChangeText={setCurrentTag} />
     {tags.map((tag, index) =>
-      <View key={`${tag}-${index}`} orientation='row' alignItems='center' justifyContent='center' style={{ marginRight: 5, borderRadius: 15, borderWidth: 1, backgroundColor: '#0058886a', paddingHorizontal: 5 }} >
+      <View key={`${tag}-${index}`} flexDirection='row' alignItems='center' justifyContent='center' style={{ marginRight: 5, borderRadius: 15, borderWidth: 1, backgroundColor: '#0058886a', paddingHorizontal: 5 }} >
         <Text fontWeight='bold' fontSize={14} marginRight={5}>{tag}</Text>
         <Vector name={'close'} width={9} height={9} onPress={() => {
           const tmpArr = tags
@@ -354,9 +347,9 @@ export const PhoneValidationInput = () => {
 
   return <View transparent>
     <View
-      orientation="row"
-      align="center"
-      justify="flex-start"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="flex-start"
       spacing={false}
       transparent>
       <Pressable
@@ -372,7 +365,7 @@ export const PhoneValidationInput = () => {
         {`+ ${countryCallingCode}`}
       </Text>
 
-      <View orientation="row" style={{ borderRightColor: 'black', borderRightWidth: 1, marginHorizontal: 5, }} />
+      <View flexDirection="row" style={{ borderRightColor: 'black', borderRightWidth: 1, marginHorizontal: 5, }} />
       <TextInput
         keyboardType={'phone-pad'}
         placeholder={'Enter phone number'}
@@ -402,7 +395,7 @@ export const EmailValidationInput = () => {
     setEmailInput(trimmedEmail)
   }
 
-  return <View transparent orientation='row' align='center'>
+  return <View transparent flexDirection='row' alignItems='center'>
     <Pressable
       onPress={() => { setCountryPickerVisibility(true) }}
     >
@@ -490,7 +483,7 @@ export const CountryPicker = ({ visible, updateVisibility, }: ICountryPickerProp
                 updateVisibility(false)
                 handleCountryChange(item.id)
               }}>
-              <View orientation="row" align="center"
+              <View flexDirection="row" alignItems="center"
                 style={{
                   backgroundColor: 'transparent',
                 }} >

@@ -37,14 +37,18 @@ export const useStore = create<GlobalUserSettingsContext>(set => ({
 
 type LoggedInUser = {
     currentUserID: string,
-    setCurrentUserID: (userID: string) => void
-
+    setCurrentUserID: (userID: string) => void,
+    currentApplicationStatus: string,
+    setApplicatinStatus: (newStatus: string) => void
 }
 
 export const useAuthenticatedStore = create<LoggedInUser>(set => ({
     currentUserID: '',
     setCurrentUserID: (userID: string) => set({ currentUserID: userID }),
-
+    currentApplicationStatus: 'Not Started',
+    setApplicatinStatus: (newStatus: string) => {
+        set({ currentApplicationStatus: newStatus })
+    },
 }))
 
 export const storeDataAsyncStorage = async (key: string, value: any) => {

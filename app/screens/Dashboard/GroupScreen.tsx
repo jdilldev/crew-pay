@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApp, useUser } from '@realm/react';
-import RealmContext, { Group, User } from '../../database'
+import RealmContext, { Group, User, SharedUserInfo } from '../../database'
 import { Button, Divider, Text, TextInput, Vector, View } from '../../styles/styles';
 import Modal from "react-native-modal";
 import { Modal as DefaultModal, FlatList, ListRenderItem, SafeAreaView, Image, Pressable, Button as DefaultButton } from 'react-native';
@@ -11,6 +11,7 @@ import { Field } from '../../components/Field';
 import { capitalize } from '../../utils'
 import { DEVICE_WIDTH, MAX_CHARS_GROUP_NAME } from '../../constants/Constants';
 import { hasHardwareAsync, isEnrolledAsync, authenticateAsync } from 'expo-local-authentication'
+import { Use } from 'react-native-svg';
 
 const handleBiometricAuth = async () => {
     const savedBiometrics = await isEnrolledAsync();
@@ -32,6 +33,7 @@ type GroupUsageType = 'unilateral' | 'shared'
 const GroupScreen = () => {
     const realm = useRealm()
     const groups = useQuery(Group);
+    const sharedUserInfo = useQuery(SharedUserInfo)
     const { currentUserID } = useAuthenticatedStore()
     const currentUser = currentUserID ? useObject(User, currentUserID) : null
     const [open, setOpen] = useState(false)
@@ -85,7 +87,7 @@ const GroupScreen = () => {
             }}>
                 <Vector name='close' width={10} height={10} style={{ padding: 8, alignSelf: 'flex-end' }} onPress={() => setOpen(false)} />
                 <View flex={1} padding={10}>
-                    <View alignItems='center'>
+                    <View alignItems='center' >
                         <Text textAlign='center' size='small' type='secondary'>{`Group Leader: ${currentUser?.firstName}`}</Text>
                         <Image
                             style={{ width: 100, height: 100 }}
@@ -95,20 +97,28 @@ const GroupScreen = () => {
                     <Field value={groupMembers} setValue={setGroupMembers} fieldType='tag-input' label='Invite' noStyle />
                     <Field value={description} setValue={setDescription} fieldType='text' multiline={true} label='Description' noStyle />
                     <Field value={groupType} setValue={setGroupType} fieldType='button-group' buttons={['shared', 'unilateral']} label='Card Usage' noStyle />
-                    <View width={'100%'} orientation='row' justifyContent='space-around' >
+                    <View width={'100%'} flexDirection='row' justifyContent='space-around' >
                         <Button type='primary' weight='normal' size="smallButton" text='Create Group' disabled={isGroupButtonDisabled()} onPress={() => onSaveGroup(groupName, description, groupMembers, groupType)} />
                     </View>
                     <View flex={1} marginTop={5} borderRadius={10} backgroundColor={'palegreen'}>
-                        <Text textAlign='center'>Suggested</Text>
+                        <Text textAlign='center'>Contacts</Text>
+
                     </View>
                 </View>
             </SafeAreaView>
         </DefaultModal>
     }
 
+    const extractDisplayName = (memberId: string) => {
+        const member = sharedUserInfo.find(user => user._id === memberId)!
+
+        return member.displayName && member.displayName !== '' ? member.displayName : member.firstName + ' ' + member.lastInitial + '.'
+    }
+
 
     const UseCardModal = () => {
         //fields 
+        const [amount, setAmount] = useState('')
         const [description, setDescription] = useState('')
         const image = { uri: "https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png" };
 
@@ -138,8 +148,8 @@ const GroupScreen = () => {
                         padding: 10
                     }}>
                     <View>
-                        <View padding={5} orientation='row' alignItems='center' justifyContent='space-between'>
-                            <View orientation='row' alignItems='center'>
+                        <View padding={5} flexDirection='row' alignItems='center' justifyContent='space-between'>
+                            <View flexDirection='row' alignItems='center'>
                                 <Image
                                     style={{ width: 50, height: 50, marginRight: 10 }}
                                     source={{ uri: `https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png` }} />
@@ -149,21 +159,23 @@ const GroupScreen = () => {
                         </View>
                         <Divider />
                         <Text fontWeight='200'>Transaction Details</Text>
-                        <View orientation='row' justifyContent='flex-start'>
-                            <Field width='30%' value={description} setValue={setDescription} fieldType='text' label='Purchase Amount' noStyle />
+
+                        <View flexDirection='row' justifyContent='flex-start'>
+                            <Field width='30%' value={amount} setValue={setAmount} fieldType='text' label='Amount' noStyle />
+                            <Field width='65%' value={description} setValue={setDescription} fieldType='text' label='Description' noStyle />
                         </View>
-                        <Field value={description} setValue={setDescription} fieldType='text' label='Purchase Description' noStyle />
-                        <View marginLeft={20} >
-                            <View alignItems='center' orientation='row' justifyContent='space-between'>
+                        <View alignItems='flex-start' flexDirection='row' justifyContent='space-between'>
+                            <DefaultButton title='Add Photo (optional)' onPress={() => console.log('open photos')} />
+                            {/*    <Image
+                                style={{ width: 50, height: 50, }}
+                                source={{ uri: `https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png` }} /> */}
+                        </View>
+                        <View>
+                            <View alignItems='center' flexDirection='row' justifyContent='space-between'>
                                 <Text size='small' fontWeight='300'>Remaining after purchase</Text>
                                 <Text type='success'>$0.00</Text>
                             </View>
-                            <View alignItems='flex-start' orientation='row' justifyContent='space-between'>
-                                <Text size='small' fontWeight='300'>Upload Photo (optional)</Text>
-                                <Image
-                                    style={{ width: 50, height: 50, }}
-                                    source={{ uri: `https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png` }} />
-                            </View>
+
                         </View>
                     </View>
                     <DefaultButton title='Send Request' onPress={handleBiometricAuth} />
@@ -177,7 +189,7 @@ const GroupScreen = () => {
     if (currentUserID && currentUser) {
         const GroupList = () => {
             return <View flex={1} >
-                <View orientation='row' justifyContent='flex-end' spacing={true}>
+                <View flexDirection='row' justifyContent='flex-end' spacing={true}>
                     <Button style={{ borderWidth: 0 }} outlined icon={{ name: 'new-group', width: 30, height: 30 }} size='smallButton' text='' onPress={() => {
                         setOpen(true)
                     }} />
@@ -191,7 +203,7 @@ const GroupScreen = () => {
                             keyExtractor={task => task._id.toString()}
                             renderItem={({ item }) => {
                                 return <View spacing={true} paddingHorizontal={10}>
-                                    <View orientation='row' alignItems='center' justifyContent='space-between'>
+                                    <View flexDirection='row' alignItems='center' justifyContent='space-between'>
                                         <Text flex={1} spacing={false}>{item.name}</Text>
                                         {item.owner !== currentUserID &&
                                             <Button outlined size='smallButton' text='Join' onPress={() => {
@@ -230,12 +242,12 @@ const GroupScreen = () => {
                         }
                         renderItem={({ item }) => {
                             return <Pressable onPress={() => console.log(item.name)}>
-                                <View orientation='row' alignItems='center' justifyContent='space-between' spacing={false}>
-                                    <View orientation='row' alignItems='center'>
+                                <View flexDirection='row' alignItems='center' justifyContent='space-between' spacing={false}>
+                                    <View flexDirection='row' alignItems='center'>
                                         <Text size='medium' fontWeight='normal' spacing={false}>{item.name}</Text>
                                     </View>
                                     {(item.usageType === 'shared' || (item.owner === currentUserID)) &&
-                                        <View orientation='column' justifyContent='center'>
+                                        <View flexDirection='column' justifyContent='center'>
                                             <Button weight={'300'} type='primary' outlined size='smallButton' text='Use Card' onPress={() => setSelectedGroup(item)} />
                                         </View>
                                     }
@@ -243,9 +255,13 @@ const GroupScreen = () => {
                                 </View>
                                 <View marginLeft={10}>
                                     <Text marginTop={3} type={item.available === 0 ? 'pending' : item.available! < 0 ? 'error' : 'success'} spacing={false}>{`Available Funds: $${item.available ? (item.available / 100).toLocaleString("en-US", { style: "currency", currency: "USD" }) : '0.00'}`}</Text>
-                                    <Text textTransform='capitalize' fontWeight='300' size='default' type='secondary' spacing={false}>{`${capitalize(item.usageType)} Card ${item.usageType === 'unilateral' ? ' | Group Leader:' + item.owner : ''}`}</Text>
+                                    <Text textTransform='capitalize' fontWeight='300' size='default' type='secondary' spacing={false}>{`${capitalize(item.usageType)} Card ${item.usageType === 'unilateral' ? ' | Group Leader: ' + extractDisplayName(item.owner) : ''}`}</Text>
                                     <Text fontWeight='300' size='default' type='default' spacing={false}>{item.description || 'placeholder description'}</Text>
-                                    <Text type='primary'>{item.members?.join(' | ')}</Text>
+                                    <View flexDirection='row'>
+                                        {item.members.map((memberId, index) => {
+                                            return <Text key={memberId} type='primary'>{`${extractDisplayName(memberId)}${index !== item.members.length - 1 ? ' | ' : ''}`}</Text>
+                                        })}
+                                    </View>
                                 </View>
                             </Pressable>
                         }}

@@ -67,7 +67,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                 {authType === LoginType.EMAIL
                     ? <EmailValidationInput /> : <PhoneValidationInput />}
             </View>
-            <View orientation="row" justify="center">
+            <View flexDirection="row" justifyContent="center">
                 <Text
                     textAlign="center"
                     size="default"
@@ -77,7 +77,7 @@ const GetStarted = ({ navigation }: RootStackScreenProps<'GetStarted'>) => {
                     }}>
                     Use {authType === LoginType.EMAIL ? 'phone' : 'email'}
                 </Text>
-                <View orientation="row" align="center">
+                <View flexDirection="row" alignItems="center">
                     <Image style={{ width: 20, height: 20, marginLeft: 40 }} source={require('../../assets/images/vector/google.png')} />
                     <Text marginLeft={2}> Use Gmail</Text>
                 </View>

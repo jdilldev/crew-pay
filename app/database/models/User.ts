@@ -13,7 +13,6 @@ export default class User extends Realm.Object {
 	phone?: string;
 	email?: string;
 	nationality!: CountryCode;
-	uniqueVerificationNumber?: string | undefined;
 	verificationType?: "ssn" | "passport" | undefined;
 	photo?: ArrayBuffer;
 	isActive?: boolean;

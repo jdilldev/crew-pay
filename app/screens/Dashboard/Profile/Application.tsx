@@ -95,7 +95,6 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
                     {
                         _id: currentUserID,
                         address: streetAddress,
-                        uniqueVerificationNumber: idNumber
                     },
                     UpdateMode.Modified
                 );
@@ -128,7 +127,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
                 updateStatus(userStatus)
                 realm.write(() => {
                     if (currentUser)
-                        currentUser.applicationID = id
+                        currentUser.customerID = id
                 })
             }
         } catch (err) {
@@ -186,7 +185,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
                         <Text textAlign='center' fontWeight='200' spacing={false}>{'Application'}</Text>
                         <ScrollView>
                             <Text type='primary' size='small'>{'Personal Details'.toUpperCase()}</Text>
-                            <View orientation='row'>
+                            <View flexDirection='row'>
                                 <Field width={'48%'} fieldType='text' label={'First Name'} subType={'name'} value={firstName} setValue={setFirstName} />
                                 <Field width={'48%'} fieldType='text' label={'Last Name'} subType={'familyName'} value={lastName} setValue={setLastName} />
                             </View>
@@ -195,23 +194,23 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
 
                             <Text marginTop={15} type='primary' size='small' spacing={false}>{'Address'.toUpperCase()}</Text>
                             <Field fieldType='street' region={region} label={'Street'} value={streetAddress} setValue={setStreetAddress} />
-                            <View orientation='row'>
+                            <View flexDirection='row'>
                                 <Field width={'72%'} fieldType='street' region={region} label={'Street 2 (optional)'} value={streetAddress2} setValue={setStreetAddress2} />
                                 <Field width={'23%'} fieldType='text' label={'Country'} value={currentUser.nationality} readonly setValue={() => { }} />
                             </View>
-                            <View orientation='row'>
+                            <View flexDirection='row'>
                                 <Field width={'55%'} fieldType='text' label={'City'} value={city} setValue={setCity} />
                                 <Field width={'40%'} fieldType='postal-code' region={region} label={'Postal Code'} value={postalCode} setValue={setPostalCode} />
                             </View>
 
                             <Text marginTop={15} type='primary' size='small' spacing={false}>{'Identity Verification'.toUpperCase()}</Text>
-                            <View orientation='row' justifyContent='center' alignItems='center' flexWrap='wrap'>
+                            <View flexDirection='row' justifyContent='center' alignItems='center' flexWrap='wrap'>
                                 <Field width={'63%'} icon={'calendar'} fieldType='birthday' label={'Date of Birth'} value={dob} setValue={setDob} />
                                 {verificationMethod === 'ssn'
                                     ? <Field width={DEVICE_WIDTH < 400 ? '70%' : '63%'} icon={'ssn'} fieldType='ssn' label={'Social Security Number'} value={idNumber} setValue={setIdNumber} />
                                     : <Field width={'63%'} region={region} icon={'passport'} fieldType='passport' label={'Passport Number'} value={idNumber} setValue={setIdNumber} />}
                             </View>
-                            <View orientation='row' justifyContent='center' alignItems='center'>
+                            <View flexDirection='row' justifyContent='center' alignItems='center'>
                                 <CheckBox
                                     tintColors={{ true: 'teal', false: 'teal' }}
                                     onCheckColor='teal'
@@ -224,7 +223,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
                                 />
                                 <Text fontSize={14} spacing={false}>{' User Agreement'}</Text>
                             </View>
-                            <View spacing={true} orientation='row' justifyContent='center' alignItems='center'>
+                            <View spacing={true} flexDirection='row' justifyContent='center' alignItems='center'>
                                 <CheckBox
                                     tintColors={{ true: 'teal', false: 'teal' }}
                                     onCheckColor='teal'
@@ -238,7 +237,7 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
                                 <Text fontSize={14} spacing={false}>{' Terms and Disclosures'}</Text>
                             </View>
                         </ScrollView>
-                        <View orientation='row' justifyContent='space-around' spacing={true}>
+                        <View flexDirection='row' justifyContent='space-around' spacing={true}>
                             <Button weight='300' outlined size='smallButton' text={'Cancel'} onPress={() => handleClose()} />
                             <Button weight='300' type='primary' size='smallButton' disabled={isFormInvalid()} text={'Submit'} onPress={() => onSubmit()} />
                         </View>
