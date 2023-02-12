@@ -180,7 +180,7 @@ export const Field = ({ value, setValue, fieldType, icon, label, width, region, 
                     setValue('')
             }, [first, second, third])
 
-            field = <View flex={1} orientation='row' transparent alignItems='center' justifyContent='center' marginRight={5}>
+            field = <View flex={1} flexDirection='row' transparent alignItems='center' justifyContent='center' marginRight={5}>
                 <TextInput
                     value={first}
                     onChangeText={setFirst}
@@ -247,13 +247,13 @@ export const Field = ({ value, setValue, fieldType, icon, label, width, region, 
     const withStyleStyles = { 'borderWidth': 1, 'backgroundColor': '#98989815', padding: 5 }
 
     return <View marginLeft={10} width={width ? width : '100%'} spacing={true} transparent>
-        <View orientation='row' alignItems='center' marginBottom={2} transparent>
+        <View flexDirection='row' alignItems='center' marginBottom={2} transparent>
             <Text type={errorMessage !== '' ? 'error' : isFocused ? 'focused' : 'default'} marginRight={2} spacing={false} size='small'>{label}</Text>
             {icon && <Vector name={icon} width={15} height={12} onPress={() => fieldType === 'birthday' ? setDatePickerOpen(!datePickerOpen) : null} />}
         </View>
 
 
-        <View height={35} marginRight={10} transparent orientation='row' alignItems='center' style={noStyle ? noStyleStyles : withStyleStyles} borderColor={errorMessage !== '' ? errorColor : isFocused ? focusedColor : textColor}>
+        <View height={35} marginRight={10} transparent flexDirection='row' alignItems='center' style={noStyle ? noStyleStyles : withStyleStyles} borderColor={errorMessage !== '' ? errorColor : isFocused ? focusedColor : textColor}>
             {<View flex={1} transparent marginLeft={2}>{field}</View>}
             {errorMessage === '' && value !== '' && fieldType !== 'button-group' ? <Vector name='check' width={10} height={10} style={{ marginRight: 3 }} /> : null}
         </View>

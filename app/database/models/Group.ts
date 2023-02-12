@@ -9,6 +9,7 @@ type NewGroup = {
 	initialUser: string;
 	initialMembers: string[];
 };
+
 export default class Group extends Realm.Object {
 	_id!: Realm.BSON.ObjectId;
 	isActive!: boolean;
@@ -22,9 +23,9 @@ export default class Group extends Realm.Object {
 	depositAccountId?: string;
 	accountNumber?: string;
 	routingNumber?: string;
-	balance?: number;
-	hold?: number;
-	available?: number;
+	balance!: number;
+	hold!: number;
+	available!: number;
 
 	// To use a class as a Realm object type, define the object schema on the static property "schema".
 	static generate({
@@ -42,6 +43,9 @@ export default class Group extends Realm.Object {
 			description,
 			usageType,
 			members: [...initialMembers, initialUser],
+			available: 0.0,
+			hold: 0.0,
+			balance: 0.0,
 			//card: new Card(),
 			createdAt: new Date(),
 		};
@@ -61,9 +65,9 @@ export default class Group extends Realm.Object {
 			depositAccountId: "string?",
 			accountNumber: "string?",
 			routingNumber: "string?",
-			balance: "int?",
-			hold: "int?",
-			available: "int?",
+			balance: "double",
+			hold: "double",
+			available: "double",
 			card: "Card?",
 			//	currency: "string",
 			groupLogo: "data?",

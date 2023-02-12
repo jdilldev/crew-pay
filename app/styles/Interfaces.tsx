@@ -2,8 +2,10 @@ import { ReactNode } from "react"
 import { ViewStyle } from "react-native"
 import { IconPacks, VectorProps, IconTypes } from "../types"
 
+type IndicatorType = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti' | 'focused' | 'divider' | 'pending'
+
 export interface TextThemeProps {
-    type?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'anti' | 'focused' | 'divider' | 'pending'
+    type?: IndicatorType
     size?: 'large' | 'medium' | 'small' | 'smallButton' | 'normalButton' | 'largeButton' | 'default'
     align?: 'center' | 'left' | 'right' | 'justify'
     spacing?: boolean,
@@ -18,6 +20,7 @@ export interface ViewThemeProps {
 }
 
 interface IconBasics {
+    type?: IndicatorType,
     color?: string,
     style?: ViewStyle
     pressable?: boolean,

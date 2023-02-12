@@ -64,10 +64,11 @@ export const getSVG = (name: string, fill: string, width: number | string, heigh
             return <Close fill={fill} width={width} height={height} style={style} />
         }
         case 'check': {
+
             return <Check fill={fill} width={width} height={height} style={style} />
         }
         case 'check-outlined': {
-            return <CheckOutline fill={fill} width={width} height={height} style={style} />
+            return <CheckOutline color={'red'} fill={fill} width={width} height={height} style={style} />
         }
         case 'check-filled': {
             return <CheckFilled fill={fill} width={width} height={height} style={style} />

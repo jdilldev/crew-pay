@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApp, useUser } from '@realm/react';
-import RealmContext, { Group, User, SharedUserInfo } from '../../database'
+import RealmContext, { Group, Card, User, SharedUserInfo } from '../../database'
 import { Button, Divider, Text, TextInput, Vector, View } from '../../styles/styles';
 import Modal from "react-native-modal";
 import { Modal as DefaultModal, FlatList, ListRenderItem, SafeAreaView, Image, Pressable, Button as DefaultButton } from 'react-native';
@@ -15,8 +15,9 @@ import { Use } from 'react-native-svg';
 
 const handleBiometricAuth = async () => {
     const savedBiometrics = await isEnrolledAsync();
-    if (!savedBiometrics)
+    if (!savedBiometrics) {
         console.log('yikes')
+    }
     else {
         const { success } = await authenticateAsync({
             promptMessage: 'Authenticate request to spend $$',
@@ -29,6 +30,10 @@ const handleBiometricAuth = async () => {
 
 }
 
+const BalanceText = ({ amount }: { amount: number }) => {
+    return <Text marginTop={3} type={amount === 0 ? 'pending' : amount! < 0 ? 'error' : 'success'} spacing={false}>{`Available Funds: ${amount ? (amount).toLocaleString("en-US", { style: "currency", currency: "USD" }) : '$0.00'}`}</Text>
+
+}
 type GroupUsageType = 'unilateral' | 'shared'
 const GroupScreen = () => {
     const realm = useRealm()
@@ -178,7 +183,7 @@ const GroupScreen = () => {
 
                         </View>
                     </View>
-                    <DefaultButton title='Send Request' onPress={handleBiometricAuth} />
+                    <DefaultButton title='Submit' onPress={handleBiometricAuth} />
                 </View>
             </SafeAreaView>
         </Modal>
@@ -248,18 +253,18 @@ const GroupScreen = () => {
                                     </View>
                                     {(item.usageType === 'shared' || (item.owner === currentUserID)) &&
                                         <View flexDirection='column' justifyContent='center'>
-                                            <Button weight={'300'} type='primary' outlined size='smallButton' text='Use Card' onPress={() => setSelectedGroup(item)} />
+                                            <Button weight={'300'} type='primary' outlined size='smallButton' text='Send Request' onPress={() => setSelectedGroup(item)} />
                                         </View>
                                     }
                                     {/*     <Text>{item.description}</Text> */}
                                 </View>
                                 <View marginLeft={10}>
-                                    <Text marginTop={3} type={item.available === 0 ? 'pending' : item.available! < 0 ? 'error' : 'success'} spacing={false}>{`Available Funds: $${item.available ? (item.available / 100).toLocaleString("en-US", { style: "currency", currency: "USD" }) : '0.00'}`}</Text>
+                                    <BalanceText amount={item.available} />
                                     <Text textTransform='capitalize' fontWeight='300' size='default' type='secondary' spacing={false}>{`${capitalize(item.usageType)} Card ${item.usageType === 'unilateral' ? ' | Group Leader: ' + extractDisplayName(item.owner) : ''}`}</Text>
                                     <Text fontWeight='300' size='default' type='default' spacing={false}>{item.description || 'placeholder description'}</Text>
                                     <View flexDirection='row'>
                                         {item.members.map((memberId, index) => {
-                                            return <Text key={memberId} type='primary'>{`${extractDisplayName(memberId)}${index !== item.members.length - 1 ? ' | ' : ''}`}</Text>
+                                            return <Text key={memberId} type='primary'>{`${extractDisplayName(memberId)}${index !== item.members.length - 1 ? ', ' : ''}`}</Text>
                                         })}
                                     </View>
                                 </View>

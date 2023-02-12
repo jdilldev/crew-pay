@@ -141,13 +141,14 @@ export const Vector = ({
   size = 20,
   name,
   pack,
+  type,
   color = 'black',
   lightColor,
   darkColor,
   onPress,
   ...otherProps }: VectorProps) => {
   let Icon = null;
-  const iconColor = color ? color : useThemeColor({ light: lightColor, dark: darkColor }, 'default')
+  const iconColor = type ? useThemeColor({ light: lightColor, dark: darkColor }, type) : color ? color : useThemeColor({ light: lightColor, dark: darkColor }, 'default')
   const { style } = otherProps
 
   if (name && pack) {
@@ -166,7 +167,7 @@ export const Vector = ({
         break;
     }
   } else {
-    Icon = getSVG(name, color, width, height, style)
+    Icon = getSVG(name, iconColor, width, height, style)
   }
 
   return onPress ? <Pressable onPress={onPress} style={style}>{Icon}</Pressable> : Icon;

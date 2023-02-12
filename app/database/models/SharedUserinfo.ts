@@ -1,5 +1,6 @@
 export default class SharedUserInfo extends Realm.Object {
 	_id!: string;
+	status!: string;
 	displayName?: string;
 	firstName?: string;
 	lastInitial?: string;
@@ -17,6 +18,7 @@ export default class SharedUserInfo extends Realm.Object {
 			lastInitial: "string?",
 			photo: "data?",
 			currency: "string?",
+			status: "string",
 		},
 	};
 }

@@ -87,7 +87,6 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
     }
 
     const onSubmit = async () => {
-
         try {
             realm.write(() => {
                 realm.create(
@@ -121,13 +120,14 @@ const Application = ({ region, openFromProfile, setOpenFromProfile, status, upda
             })
 
             if (error) {
-                console.log('error error, show error message')
+                console.log('error error, show error message ' + error)
 
             } else {
                 updateStatus(userStatus)
                 realm.write(() => {
-                    if (currentUser)
+                    if (currentUser) {
                         currentUser.customerID = id
+                    }
                 })
             }
         } catch (err) {

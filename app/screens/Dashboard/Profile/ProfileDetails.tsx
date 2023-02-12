@@ -95,6 +95,7 @@ const ProfileDetails = () => {
 
     const color = useThemeColor({}, APPLICATION_STATUS[status].type!)
 
+    console.log(currentUser?.customerID)
     useFocusEffect(
         useCallback(() => {
             setOpenModal(!applicationID);
@@ -109,9 +110,13 @@ const ProfileDetails = () => {
                     source={{ uri: `https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png` }} />
             </View>
             <Text fontSize={30} textTransform='capitalize' fontWeight='300' spacing={false}>{currentUser.firstName ? currentUser.firstName : 'Hello!'}</Text>
-            <Pressable onPress={() => setOpenModal(true)}>
+            <Pressable onPress={() => {
+                if (APPLICATION_STATUS[status].text !== 'Approved') {
+                    setOpenModal(true)
+                }
+            }}>
                 <View flexDirection='row' alignItems='center'>
-                    <Vector style={{ marginRight: 3 }} width={15} height={15} name={APPLICATION_STATUS[status].icon} color={color} />
+                    <Vector style={{ marginRight: 3 }} width={15} height={15} type={APPLICATION_STATUS[status].type} name={APPLICATION_STATUS[status].icon} color={color} />
                     <Text fontSize={20} type={APPLICATION_STATUS[status].type} fontWeight='normal'>{APPLICATION_STATUS[status].text}</Text>
                     {status === 'Loading' ? <LottieView
                         style={{ width: 100, }}
@@ -142,7 +147,7 @@ const ProfileDetails = () => {
         />
         <Application region={country} openFromProfile={openModal} setOpenFromProfile={setOpenModal} status={status} updateStatus={setStatus} />
 
-    </View>
+    </View >
         : <Text>No data</Text>
 }
 

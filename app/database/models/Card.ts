@@ -11,6 +11,7 @@ export default class Card extends Realm.Object {
 	last4Digits!: string;
 	expirationDate!: string;
 	createdAt!: Date;
+	status!: string;
 
 	static generate({ id, last4Digits, expirationDate, createdAt }: NewCard) {
 		return {
@@ -18,6 +19,9 @@ export default class Card extends Realm.Object {
 			last4Digits,
 			expirationDate,
 			createdAt,
+			staus: "frozen",
+			description:
+				"TODO Remove, but will break schema and not ready for that right now",
 		};
 	}
 
@@ -34,6 +38,7 @@ export default class Card extends Realm.Object {
 			transactions: "Transaction[]",
 			description: "string",
 			createdAt: "date",
+			status: "string",
 		},
 	};
 }
