@@ -132,7 +132,6 @@ export const resolvers = {
 						attributes: { status },
 					},
 				} = await unit.applications.get(applicationId);
-
 				return status;
 			} catch (err) {
 				console.log(err.message);
